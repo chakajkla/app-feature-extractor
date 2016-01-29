@@ -1,4 +1,4 @@
-package objects;
+package server.objects;
 
 /**
  * Created by christophstanik on 6/23/14. Extended by chakajklajes on 21/012016

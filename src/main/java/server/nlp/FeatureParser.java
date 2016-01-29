@@ -1,4 +1,4 @@
-package nlp;
+package server.nlp;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import nlp.IndexBuilder.TYPE;
-import nlp.featureCluster.FeatureGroup;
-import objects.AppFeatureDataPoint;
-import objects.AppFeatureDescriptor;
-import objects.Bigram;
+import server.nlp.IndexBuilder.TYPE;
+import server.nlp.featureCluster.FeatureGroup;
+import server.objects.AppFeatureDataPoint;
+import server.objects.AppFeatureDescriptor;
+import server.objects.Bigram;
 import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.IDictionary;
 import edu.mit.jwi.item.IIndexWord;

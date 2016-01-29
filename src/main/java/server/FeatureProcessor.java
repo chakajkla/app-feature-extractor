@@ -2,16 +2,16 @@ package server;
 
 import java.util.List;
 
-import nlp.BigramExtractor;
-import nlp.FeatureParser;
-import nlp.IndexBuilder;
-import nlp.IndexBuilder.TYPE;
-import nlp.NLPUtil;
-import objects.AndroidApp;
-import objects.AppFeatureDescriptor;
-import objects.Bigram;
-import crawler.PlayStoreAppPageCrawler;
-import database.DataAccess;
+import server.nlp.BigramExtractor;
+import server.nlp.FeatureParser;
+import server.nlp.IndexBuilder;
+import server.nlp.IndexBuilder.TYPE;
+import server.nlp.NLPUtil;
+import server.objects.AndroidApp;
+import server.objects.AppFeatureDescriptor;
+import server.objects.Bigram;
+import server.crawler.PlayStoreAppPageCrawler;
+import server.database.DataAccess;
 
 public class FeatureProcessor {
 

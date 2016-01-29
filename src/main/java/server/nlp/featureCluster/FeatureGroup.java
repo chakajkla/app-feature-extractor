@@ -1,8 +1,8 @@
-package nlp.featureCluster;
+package server.nlp.featureCluster;
 
 import java.util.ArrayList;
 
-import objects.AppFeatureDataPoint;
+import server.objects.AppFeatureDataPoint;
 
 
 

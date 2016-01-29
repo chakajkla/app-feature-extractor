@@ -1,4 +1,4 @@
-package objects;
+package server.objects;
 
 public class PathStorage {
 

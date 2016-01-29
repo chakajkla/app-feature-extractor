@@ -1,4 +1,4 @@
-package nlp;
+package server.nlp;
 
 import java.io.File;
 

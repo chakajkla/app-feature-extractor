@@ -1,4 +1,4 @@
-package nlp;
+package server.nlp;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import database.DataAccess;
+import server.database.DataAccess;
 
-import objects.AppFeatureDataPoint;
-import objects.Bigram;
+import server.objects.AppFeatureDataPoint;
+import server.objects.Bigram;
 import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.IDictionary;
 import edu.mit.jwi.item.IIndexWord;

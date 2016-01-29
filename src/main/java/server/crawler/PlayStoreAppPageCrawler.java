@@ -1,6 +1,6 @@
-package crawler;
+package server.crawler;
 
-import objects.AndroidApp;
+import server.objects.AndroidApp;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

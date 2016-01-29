@@ -1,4 +1,4 @@
-package test;
+package server.test;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -10,7 +10,7 @@ import server.FeatureProcessor;
 
 public class FeatureBuild {
 
-	public static void main(String[] args) {
+	public static void buildTopAppFeatures() {
 
 		java.nio.file.Path pa = Paths
 				.get("D:\\data\\phd_thesis\\data\\appdata\\android_links\\ids.txt");

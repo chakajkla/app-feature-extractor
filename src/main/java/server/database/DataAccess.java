@@ -1,16 +1,16 @@
-package database;
+package server.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import nlp.NLPUtil;
+import server.nlp.NLPUtil;
 
-import objects.AndroidApp;
-import objects.AppFeatureDataPoint;
-import objects.AppFeatureDescriptor;
-import objects.PathStorage;
+import server.objects.AndroidApp;
+import server.objects.AppFeatureDataPoint;
+import server.objects.AppFeatureDescriptor;
+import server.objects.PathStorage;
 
 public class DataAccess {
 

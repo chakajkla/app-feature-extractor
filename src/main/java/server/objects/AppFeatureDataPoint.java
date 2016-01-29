@@ -1,6 +1,6 @@
-package objects;
+package server.objects;
 
-import nlp.NLPUtil;
+import server.nlp.NLPUtil;
 
 public class AppFeatureDataPoint implements Comparable<AppFeatureDataPoint> {
 
@@ -87,6 +87,10 @@ public class AppFeatureDataPoint implements Comparable<AppFeatureDataPoint> {
 	public String toString() {
 		return this.verb + "_" + this.noun + "_" + this.ngramScore + "_"
 				+ this.tfScore;
+	}
+	
+	public String getFeature(){
+	   return this.verb + " " + this.noun;	
 	}
 
 	public double getScore() {
