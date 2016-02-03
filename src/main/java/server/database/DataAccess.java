@@ -172,13 +172,15 @@ public class DataAccess {
 
 		Connection c = null;
 		Statement stmt = null;
+		
+		int featureCount = 0;
 
 		try {
 			Class.forName("org.sqlite.JDBC");
 			c = DriverManager.getConnection("jdbc:sqlite:"
 					+ PathStorage.databasePath);
 			c.setAutoCommit(false);
-			System.out.println("Opened database successfully");
+			//System.out.println("Opened database successfully");
 
 			stmt = c.createStatement();
 			ResultSet rs = stmt
@@ -194,6 +196,7 @@ public class DataAccess {
 				app_feature.setTfScore(rs.getDouble("tfidf_score"));
 
 				ap.addFunctionList(app_feature);
+				featureCount++;
 
 			}
 			rs.close();
@@ -203,7 +206,7 @@ public class DataAccess {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			System.exit(0);
 		}
-		System.out.println("Select Operation done successfully");
+		System.out.println("Read features successfully__Total : " + featureCount);
 
 		return ap;
 	}
@@ -218,7 +221,7 @@ public class DataAccess {
 			c = DriverManager.getConnection("jdbc:sqlite:"
 					+ PathStorage.databasePath);
 			c.setAutoCommit(false);
-			System.out.println("Opened database successfully");
+			System.out.println("Searching coloc score...");
 
 			stmt = c.createStatement();
 			ResultSet rs = stmt
@@ -234,7 +237,7 @@ public class DataAccess {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			System.exit(0);
 		}
-		System.out.println("Select Operation done successfully");
+
 
 		return score;
 

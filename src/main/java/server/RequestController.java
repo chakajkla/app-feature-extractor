@@ -18,8 +18,15 @@ public class RequestController {
     @RequestMapping("/feature")
     public Response greeting(@RequestParam(value="packageid") String packageID) {
 
-    
+	    packageID = packageID.trim();
+	
+        System.out.println("Searching features for..." + packageID);
+	
 		AppFeatureDescriptor featurelist = FeatureProcessor.getAppFeatures(packageID);
+		
+		if(featurelist == null){
+		    return new Response(packageID);
+		}
 		
 		if(featurelist.getFunctionList().isEmpty()){
 		     return new Response(packageID);

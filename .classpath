@@ -12,8 +12,6 @@
 	<classpathentry kind="lib" path="D:/workspace/AndroidFeatureServer/lib/stanford-ner/stanford-postagger.jar"/>
 	<classpathentry kind="lib" path="D:/workspace/AndroidFeatureServer/lib/sqllite/sqlite-jdbc-3.8.11.2.jar"/>
 	<classpathentry kind="lib" path="D:/workspace/AndroidFeatureServer/lib/Lucene/lucene-analyzers-common-4.10.3.jar"/>
-	<classpathentry kind="lib" path="D:/workspace/AndroidFeatureServer/lib/Lucene/lucene-analyzers-phonetic-4.10.3.jar"/>
-	<classpathentry kind="lib" path="D:/workspace/AndroidFeatureServer/lib/Lucene/lucene-analyzers-stempel-4.10.3.jar"/>
 	<classpathentry kind="lib" path="D:/workspace/AndroidFeatureServer/lib/Lucene/lucene-core-4.10.3.jar"/>
 	<classpathentry kind="lib" path="D:/workspace/AndroidFeatureServer/lib/Lucene/lucene-queryparser-4.10.3.jar"/>
 	<classpathentry kind="output" path="bin"/>

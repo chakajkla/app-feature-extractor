@@ -56,9 +56,16 @@ public class NLPUtil {
 		return sentenceList;
 	}
 
+	private static Properties props = new Properties();
+	private static StanfordCoreNLP pipeline = null;
+
 	public static List<String> preprocessString(String text) {
 
 		props.put("annotators", "tokenize, ssplit, pos, lemma");
+
+		if (pipeline == null) {
+			pipeline = new StanfordCoreNLP(props);
+		}
 
 		List<String> tokenizer = NLPUtil.tokenizeString(text);
 
@@ -89,9 +96,6 @@ public class NLPUtil {
 
 		return sb.toString();
 	}
-
-	private static Properties props = new Properties();
-	private static StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
 	public static List<String> lemmatize(String documentText) {
 

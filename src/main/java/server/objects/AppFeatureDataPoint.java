@@ -88,13 +88,13 @@ public class AppFeatureDataPoint implements Comparable<AppFeatureDataPoint> {
 		return this.verb + "_" + this.noun + "_" + this.ngramScore + "_"
 				+ this.tfScore;
 	}
-	
-	public String getFeature(){
-	   return this.verb + " " + this.noun;	
-	}
 
 	public double getScore() {
 		return this.ngramScore * this.tfScore;
+	}
+	
+	public String getFeature() {
+		return this.verb + "_" + this.noun;
 	}
 
 }

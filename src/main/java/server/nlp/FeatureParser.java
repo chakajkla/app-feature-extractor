@@ -88,6 +88,9 @@ public class FeatureParser {
 
 	}
 
+	private static MaxentTagger tagger = null;
+	private static DependencyParser parser = null;
+
 	public static AppFeatureDescriptor preprocessAppFeature(
 			List<Bigram> bigrams, String description, String name) {
 
@@ -95,10 +98,14 @@ public class FeatureParser {
 		ap.setDescription(description);
 		ap.setName(name);
 
-		MaxentTagger tagger = new MaxentTagger(
-				"data/postagger/english-bidirectional-distsim.tagger");
-		DependencyParser parser = DependencyParser
-				.loadFromModelFile(DependencyParser.DEFAULT_MODEL);
+		if (tagger == null) {
+			tagger = new MaxentTagger(
+					"data/postagger/english-bidirectional-distsim.tagger");
+		}
+		if (parser == null) {
+			parser = DependencyParser
+					.loadFromModelFile(DependencyParser.DEFAULT_MODEL);
+		}
 
 		HashSet<String> negVerbDict = findNegativeVerbs(tagger, parser,
 				description);

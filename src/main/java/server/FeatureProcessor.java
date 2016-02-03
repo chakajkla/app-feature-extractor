@@ -21,11 +21,13 @@ public class FeatureProcessor {
 
 		// check if app is present in local database
 		if (!containPackageID(packageID)) {
+		   
+		    System.out.println("Features for " + packageID + " not found...building new features");
+		
 			// if not crawl it
 			AndroidApp app = PlayStoreAppPageCrawler.crawlAppPages(packageID);
 			if (app != null) {
-				// update databse for packageID + description etc.
-				updateDatabase(app);
+
 
 				String name = app.getPackageName();
 				String description = app.getDescription();
@@ -46,6 +48,12 @@ public class FeatureProcessor {
 				featurelist = FeatureParser.preprocessAppFeature(bigrams,
 						description, name);
 
+				/***
+				 * Update only features are extracted correctly
+				 */
+				// update databse for packageID + description etc.
+				updateDatabase(app);
+				
 				// store for future access
 				storeFeatures(featurelist);
 
@@ -55,6 +63,7 @@ public class FeatureProcessor {
 			}
 
 		} else {
+		    System.out.println("Found features for " + packageID);
 			featurelist = DataAccess.getFeatures(packageID);
 		}
 
