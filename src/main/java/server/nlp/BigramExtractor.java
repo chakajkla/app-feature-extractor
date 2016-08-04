@@ -9,7 +9,7 @@ import server.objects.Bigram;
 
 public class BigramExtractor {
 
-	public static int dist = 6;
+	public static int dist = 6; //window length
 
 	public static List<Bigram> extractBigram(List<String> tokenizedString) {
 
@@ -39,7 +39,7 @@ public class BigramExtractor {
 
 					String key = verb + "#" + noun;
 
-					if (!checkList.contains(key) && !verb.equals(noun)) {
+					if (!checkList.contains(key) && !verb.equals(noun) && !NLPUtil.checkNegativeFeature(key)) {
 						bigrams.add(new Bigram(verb, noun));
 						checkList.add(key);
 					}

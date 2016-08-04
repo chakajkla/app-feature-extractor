@@ -112,7 +112,7 @@ public class FeatureParser {
 
 		for (Bigram bg : bigrams) {
 
-			double NgramScore = getBigramScore(bg);
+			double NgramScore = getBigramScore(bg); //colocation score calculated separately using Python
 
 			String tagged = tagger.tagString(bg.toString());
 
