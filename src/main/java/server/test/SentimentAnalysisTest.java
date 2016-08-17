@@ -13,18 +13,18 @@ public class SentimentAnalysisTest {
 
     static StanfordCoreNLP pipeline;
 
-    public static void main(String[] args){
-
-        Properties props = new Properties();
-        props.setProperty("annotators", "tokenize, ssplit, parse, sentiment");
-        pipeline = new StanfordCoreNLP(props);
-
-        System.out.println(analyzeSentiment("creates stress"));
-        System.out.println(analyzeSentiment("work better"));
-        System.out.println(analyzeSentiment("get information"));
-        System.out.println(analyzeSentiment("check battery"));
-
-    }
+//    public static void main(String[] args){
+//
+//        Properties props = new Properties();
+//        props.setProperty("annotators", "tokenize, ssplit, parse, sentiment");
+//        pipeline = new StanfordCoreNLP(props);
+//
+//        System.out.println(analyzeSentiment("creates stress"));
+//        System.out.println(analyzeSentiment("work better"));
+//        System.out.println(analyzeSentiment("get information"));
+//        System.out.println(analyzeSentiment("check battery"));
+//
+//    }
 
 
     private static int analyzeSentiment(String line){

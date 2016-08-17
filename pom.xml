@@ -86,6 +86,11 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>
+                    <executable>/usr/java/jdk1.8.0_72</executable>
+                    <compilerVersion>1.8</compilerVersion>
+                </configuration>
             </plugin>
         </plugins>
     </build>
