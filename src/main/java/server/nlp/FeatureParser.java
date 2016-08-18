@@ -249,6 +249,8 @@ public class FeatureParser {
 			idxWord = dict.getIndexWord(noun, POS.NOUN);
 			idxWord.getWordIDs().get(0);
 
+			dict.close();
+
 			// check if second component is NN
 			String[] sp = tagged.split("\\s");
 

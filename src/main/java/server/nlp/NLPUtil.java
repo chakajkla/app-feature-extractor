@@ -254,6 +254,8 @@ public class NLPUtil {
                 synonymnList.add(w.getLemma());
 
             if (synonymnList.contains(w2)) {
+
+                dict.close();
                 return true;
             }
 
@@ -267,9 +269,15 @@ public class NLPUtil {
             for (IWord w : synset.getWords())
                 synonymnList.add(w.getLemma());
 
+
             if (synonymnList.contains(w1)) {
+
+                dict.close();
                 return true;
             }
+
+
+            dict.close();
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -277,6 +285,7 @@ public class NLPUtil {
         } catch (NullPointerException e) {
             return false;
         }
+
 
         return false;
     }

@@ -31,9 +31,9 @@ public class IndexBuilder {
 		ios, android
 	}
 
-	public static final String INDEX_DIRECTORY_IOS = "data\\lucene\\ios_index";
+	public static final String INDEX_DIRECTORY_IOS = "data/lucene/ios_index";
 
-	public static final String INDEX_DIRECTORY_ANDROID = "data\\lucene\\android_index";
+	public static final String INDEX_DIRECTORY_ANDROID = "data/lucene/android_index";
 
 	public static void addIndex(String description, String name, TYPE type) {
 
