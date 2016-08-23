@@ -65,6 +65,13 @@ public class FeatureProcessor {
 		} else {
 		    System.out.println("Found features for " + packageID);
 			featurelist = DataAccess.getFeatures(packageID);
+
+			//apply clustering for old features
+			try {
+				featurelist = FeatureParser.clusterFeatureMap(featurelist);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 		// Apply softmax to feature scores

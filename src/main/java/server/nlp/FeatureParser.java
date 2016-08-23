@@ -30,16 +30,18 @@ import edu.stanford.nlp.trees.TypedDependency;
 
 public class FeatureParser {
 
-	public static void clusterFeatureMap(
-			Map<String, AppFeatureDescriptor> appFeatureMap) throws Exception {
+	public static AppFeatureDescriptor clusterFeatureMap(
+			AppFeatureDescriptor appFeatureDescriptor) throws Exception {
 
 		ArrayList<AppFeatureDataPoint> allFeatures = new ArrayList<>();
 
-		for (String key : appFeatureMap.keySet()) {
-			allFeatures.addAll(appFeatureMap.get(key).getFunctionList());
-		}
+//		for (String key : appFeatureMap.keySet()) {
+//			allFeatures.addAll(appFeatureMap.get(key).getFunctionList());
+//		}
 
-		System.out.println(allFeatures.size());
+		allFeatures.addAll(appFeatureDescriptor.getFunctionList());
+
+		System.out.println("Number of features before reduction: " + allFeatures.size());
 
 		ArrayList<FeatureGroup> clusterList = new ArrayList<>();
 		while (!allFeatures.isEmpty()) {
@@ -61,30 +63,37 @@ public class FeatureParser {
 
 		}
 
+		//at this point we clear the old list
+		appFeatureDescriptor.clearFunctionList();
+
 		// process FG
 		// Unique_Key -> AppFeatureDataPoint
 		Map<String, AppFeatureDataPoint> featureReducedMap = new HashMap<String, AppFeatureDataPoint>();
 		for (FeatureGroup fg : clusterList) {
-			for (AppFeatureDataPoint dp : fg.getGroupMembers()) {
-				featureReducedMap.put(dp.getUniqueName(), fg.getGroupLeader());
-			}
+//			for (AppFeatureDataPoint dp : fg.getGroupMembers()) {
+//				featureReducedMap.put(dp.getUniqueName(), fg.getGroupLeader());
+//			}
+			appFeatureDescriptor.addFunctionList(fg.getGroupLeader());
 		}
 
-		for (String key : appFeatureMap.keySet()) {
-			for (AppFeatureDataPoint dp : appFeatureMap.get(key)
-					.getFunctionList()) {
-				if (featureReducedMap.get(dp.getUniqueName()) == null) {
-					throw new Exception("Clustering fault");
-				}
+//		for (String key : appFeatureMap.keySet()) {
+//			for (AppFeatureDataPoint dp : appFeatureMap.get(key)
+//					.getFunctionList()) {
+//				if (featureReducedMap.get(dp.getUniqueName()) == null) {
+//					throw new Exception("Clustering fault");
+//				}
+//
+//				// if (!dp.toString().equals(
+//				// featureReducedMap.get(dp.getUniqueName()).toString()))
+//				// System.out.println(dp.toString()
+//				// + " __ "
+//				// + featureReducedMap.get(dp.getUniqueName())
+//				// .toString() + " __ " + dp.getUniqueName());
+//			}
+//		}
 
-				// if (!dp.toString().equals(
-				// featureReducedMap.get(dp.getUniqueName()).toString()))
-				// System.out.println(dp.toString()
-				// + " __ "
-				// + featureReducedMap.get(dp.getUniqueName())
-				// .toString() + " __ " + dp.getUniqueName());
-			}
-		}
+
+		return appFeatureDescriptor;
 
 	}
 
@@ -153,7 +162,15 @@ public class FeatureParser {
 
 		}
 
-		return ap;
+
+		//clustering of features
+		try {
+			return clusterFeatureMap(ap);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
 
 	}
 

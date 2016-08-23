@@ -30,6 +30,11 @@ public class AppFeatureDescriptor {
 		featureCount++;
 	}
 
+	public void clearFunctionList(){
+		this.functionList.clear();
+		featureCount = 0;
+	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
