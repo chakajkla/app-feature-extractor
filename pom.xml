@@ -73,6 +73,18 @@
            <artifactId>lucene-analyzers-common</artifactId>
            <version>4.10.3</version>
         </dependency>
+
+        <dependency>
+            <groupId>de.sciss</groupId>
+            <artifactId>jawjaw</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.sciss</groupId>
+            <artifactId>ws4j</artifactId>
+            <version>0.1.0</version>
+        </dependency>
 		
     </dependencies>
 
