@@ -235,6 +235,7 @@ public class NLPUtil {
         if ((checkSynonymn(w1_noun, w2_noun, POS.NOUN)
                 && checkSynonymn(w1_verb, w2_verb, POS.VERB)) ||
                 calculateSemanticSimilarity(w1_noun, w2_noun, w1_verb, w2_verb) >= semanticSimilarityThreshold) {
+
             return true;
         }
 
