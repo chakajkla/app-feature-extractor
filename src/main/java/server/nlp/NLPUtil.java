@@ -35,7 +35,16 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 
+import edu.cmu.lti.lexical_db.ILexicalDatabase;
+import edu.cmu.lti.lexical_db.NictWordNet;
+import edu.cmu.lti.ws4j.impl.WuPalmer;
+import edu.cmu.lti.ws4j.util.WS4JConfiguration;
+
+
 public class NLPUtil {
+
+    private static final double semanticSimilarityThreshold = 0.5;
+    private static ILexicalDatabase db = new NictWordNet();
 
     public static List<String> tokenizeString(String text) {
 
@@ -223,13 +232,36 @@ public class NLPUtil {
             return true;
         }
 
-        if (checkSynonymn(w1_noun, w2_noun, POS.NOUN)
-                && checkSynonymn(w1_verb, w2_verb, POS.VERB)) {
+        if ((checkSynonymn(w1_noun, w2_noun, POS.NOUN)
+                && checkSynonymn(w1_verb, w2_verb, POS.VERB)) ||
+                calculateSemanticSimilarity(w1_noun, w2_noun, w1_verb, w2_verb) > semanticSimilarityThreshold) {
             return true;
         }
 
         return false;
     }
+
+    private static double calculateSemanticSimilarity(String noun1, String noun2, String verb1, String verb2) {
+
+        double sim = 0;
+
+        double nounSimilarity = compute(noun1, noun2);
+
+        double verbSimilarity = compute(verb1, verb2);
+
+        if(nounSimilarity == 0 && verbSimilarity == 0){
+            return sim;
+        }
+
+        return (nounSimilarity + verbSimilarity) / 2;
+    }
+
+    private static double compute(String word1, String word2) {
+        WS4JConfiguration.getInstance().setMFS(true);
+        double s = new WuPalmer(db).calcRelatednessOfWords(word1, word2);
+        return s;
+    }
+
 
     public static boolean checkSynonymn(String w1, String w2, POS pos) {
 
