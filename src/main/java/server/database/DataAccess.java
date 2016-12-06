@@ -14,232 +14,236 @@ import server.objects.PathStorage;
 
 public class DataAccess {
 
-	public static boolean updateData(AndroidApp app) {
+    public static boolean updateData(AndroidApp app) {
 
-		Connection c = null;
-		Statement stmt = null;
-		try {
-			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:"
-					+ PathStorage.databasePath);
-			c.setAutoCommit(false);
-			System.out.println("Opened database successfully");
+        Connection c = null;
+        Statement stmt = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:"
+                    + PathStorage.databasePath);
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully");
 
-			stmt = c.createStatement();
+            stmt = c.createStatement();
 
-			String desc = NLPUtil.removeNonCharacters(app.getDescription());
+            String desc = NLPUtil.removeNonCharacters(app.getDescription());
 
-			String sql = "INSERT INTO app_data (app_name, description) "
-					+ "VALUES (\"" + app.getPackageName() + "\", \"" + desc
-					+ "\" );";
+            String sql = "INSERT INTO app_data (app_name, description) "
+                    + "VALUES (\"" + app.getPackageName() + "\", \"" + desc
+                    + "\" );";
 
-			// System.out.println(sql);
-			stmt.executeUpdate(sql);
-			c.commit();
-			c.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+            // System.out.println(sql);
+            stmt.executeUpdate(sql);
+            c.commit();
+            c.close();
+        } catch (Exception e) {
+            e.printStackTrace();
 
-			return false;
-		}
-		System.out.println("Insert Operation done successfully");
+            return false;
+        }
+        System.out.println("Insert Operation done successfully");
 
-		return true;
+        return true;
 
-	}
+    }
 
-	public static AndroidApp getAppFromDatabase(String packageID) {
-		Connection c = null;
-		Statement stmt = null;
+    public static AndroidApp getAppFromDatabase(String packageID) {
+        Connection c = null;
+        Statement stmt = null;
 
-		AndroidApp ap = null;
-		try {
-			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:"
-					+ PathStorage.databasePath);
-			c.setAutoCommit(false);
-			System.out.println("Opened database successfully");
+        AndroidApp ap = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:"
+                    + PathStorage.databasePath);
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully");
 
-			stmt = c.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("SELECT * FROM app_data WHERE app_name = '"
-							+ packageID + "';");
-			while (rs.next()) {
-				String name = rs.getString("app_name");
-				String description = rs.getString("description");
-				ap = new AndroidApp();
-				ap.setPackageName(name);
-				ap.setDescription(description);
+            stmt = c.createStatement();
+            ResultSet rs = stmt
+                    .executeQuery("SELECT * FROM app_data WHERE app_name = '"
+                            + packageID + "';");
+            while (rs.next()) {
+                String name = rs.getString("app_name");
+                String description = rs.getString("description");
+                ap = new AndroidApp();
+                ap.setPackageName(name);
+                ap.setDescription(description);
 
-			}
-			rs.close();
-			stmt.close();
-			c.close();
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			System.exit(0);
-		}
-		System.out.println("Select Operation done successfully");
-		return ap;
+            }
+            rs.close();
+            stmt.close();
+            c.close();
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+        System.out.println("Select Operation done successfully");
+        return ap;
 
-	}
+    }
 
-	public static boolean checkPackageID(String packageID) {
-		Connection c = null;
-		Statement stmt = null;
+    public static boolean checkPackageID(String packageID) {
+        Connection c = null;
+        Statement stmt = null;
 
-		int contain = 0;
+        int contain = 0;
 
-		try {
-			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:"
-					+ PathStorage.databasePath);
-			c.setAutoCommit(false);
-			System.out.println("Opened database successfully");
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:"
+                    + PathStorage.databasePath);
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully");
 
-			stmt = c.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("SELECT count(*) as ct FROM app_data WHERE app_name = '"
-							+ packageID + "';");
-			while (rs.next()) {
-				contain = rs.getInt("ct");
-			}
-			rs.close();
-			stmt.close();
-			c.close();
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			System.exit(0);
-		}
-		System.out.println("Check Operation done successfully");
+            stmt = c.createStatement();
+            ResultSet rs = stmt
+                    .executeQuery("SELECT count(*) as ct FROM app_data WHERE app_name = '"
+                            + packageID + "';");
+            while (rs.next()) {
+                contain = rs.getInt("ct");
+            }
+            rs.close();
+            stmt.close();
+            c.close();
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+        System.out.println("Check Operation done successfully");
 
-		if (contain == 1) {
-			return true;
-		}
+        if (contain == 1) {
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public static void storeFeatures(AppFeatureDescriptor featurelist) {
+    public static void storeFeatures(AppFeatureDescriptor featurelist) {
 
-		Connection c = null;
-		Statement stmt = null;
-		try {
-			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:"
-					+ PathStorage.databasePath);
-			c.setAutoCommit(false);
-			System.out.println("Opened database successfully");
+        if (featurelist == null || featurelist.getFunctionList() == null) {
+            return;
+        }
 
-			stmt = c.createStatement();
+        Connection c = null;
+        Statement stmt = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:"
+                    + PathStorage.databasePath);
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully");
 
-			for (AppFeatureDataPoint dp : featurelist.getFunctionList()) {
-				String sql = "INSERT INTO features (app_name, verb, noun, col_score, tfidf_score) "
-						+ "VALUES ("
-						+ "\""
-						+ featurelist.getName()
-						+ "\""
-						+ ", \""
-						+ dp.getVerb()
-						+ "\" "
-						+ ", \""
-						+ dp.getNoun()
-						+ "\" "
-						+ ", "
-						+ dp.getNgramScore()
-						+ " "
-						+ ", "
-						+ dp.getTfScore() + " " + ");";
+            stmt = c.createStatement();
 
-				// System.out.println(sql);
-				stmt.executeUpdate(sql);
-				c.commit();
+            for (AppFeatureDataPoint dp : featurelist.getFunctionList()) {
+                String sql = "INSERT INTO features (app_name, verb, noun, col_score, tfidf_score) "
+                        + "VALUES ("
+                        + "\""
+                        + featurelist.getName()
+                        + "\""
+                        + ", \""
+                        + dp.getVerb()
+                        + "\" "
+                        + ", \""
+                        + dp.getNoun()
+                        + "\" "
+                        + ", "
+                        + dp.getNgramScore()
+                        + " "
+                        + ", "
+                        + dp.getTfScore() + " " + ");";
 
-			}
-			c.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+                // System.out.println(sql);
+                stmt.executeUpdate(sql);
+                c.commit();
 
-		}
-		System.out.println("Insert Operation done successfully");
+            }
+            c.close();
+        } catch (Exception e) {
+            e.printStackTrace();
 
-	}
+        }
+        System.out.println("Insert Operation done successfully");
 
-	public static AppFeatureDescriptor getFeatures(String packageID) {
+    }
 
-		AppFeatureDescriptor ap = new AppFeatureDescriptor();
-		ap.setName(packageID);
+    public static AppFeatureDescriptor getFeatures(String packageID) {
 
-		Connection c = null;
-		Statement stmt = null;
-		
-		int featureCount = 0;
+        AppFeatureDescriptor ap = new AppFeatureDescriptor();
+        ap.setName(packageID);
 
-		try {
-			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:"
-					+ PathStorage.databasePath);
-			c.setAutoCommit(false);
-			//System.out.println("Opened database successfully");
+        Connection c = null;
+        Statement stmt = null;
 
-			stmt = c.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("SELECT * FROM features WHERE app_name = '"
-							+ packageID + "';");
-			while (rs.next()) {
+        int featureCount = 0;
 
-				AppFeatureDataPoint app_feature = new AppFeatureDataPoint();
-				app_feature.setName(packageID);
-				app_feature.setVerb(rs.getString("verb"));
-				app_feature.setNoun(rs.getString("noun"));
-				app_feature.setNgramScore(rs.getDouble("col_score"));
-				app_feature.setTfScore(rs.getDouble("tfidf_score"));
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:"
+                    + PathStorage.databasePath);
+            c.setAutoCommit(false);
+            //System.out.println("Opened database successfully");
 
-				ap.addFunctionList(app_feature);
-				featureCount++;
+            stmt = c.createStatement();
+            ResultSet rs = stmt
+                    .executeQuery("SELECT * FROM features WHERE app_name = '"
+                            + packageID + "';");
+            while (rs.next()) {
 
-			}
-			rs.close();
-			stmt.close();
-			c.close();
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			System.exit(0);
-		}
-		System.out.println("Read features successfully__Total : " + featureCount);
+                AppFeatureDataPoint app_feature = new AppFeatureDataPoint();
+                app_feature.setName(packageID);
+                app_feature.setVerb(rs.getString("verb"));
+                app_feature.setNoun(rs.getString("noun"));
+                app_feature.setNgramScore(rs.getDouble("col_score"));
+                app_feature.setTfScore(rs.getDouble("tfidf_score"));
 
-		return ap;
-	}
+                ap.addFunctionList(app_feature);
+                featureCount++;
 
-	public static double getColocScore(String key) {
-		Connection c = null;
-		Statement stmt = null;
+            }
+            rs.close();
+            stmt.close();
+            c.close();
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+        System.out.println("Read features successfully__Total : " + featureCount);
 
-		double score = 0;
-		try {
-			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:"
-					+ PathStorage.databasePath);
-			c.setAutoCommit(false);
-			System.out.println("Searching coloc score...");
+        return ap;
+    }
 
-			stmt = c.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("SELECT score FROM coloc_map WHERE key = '"
-							+ key + "';");
-			while (rs.next()) {
-				score = rs.getInt("score");
-			}
-			rs.close();
-			stmt.close();
-			c.close();
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			System.exit(0);
-		}
+    public static double getColocScore(String key) {
+        Connection c = null;
+        Statement stmt = null;
+
+        double score = 0;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:"
+                    + PathStorage.databasePath);
+            c.setAutoCommit(false);
+            System.out.println("Searching coloc score...");
+
+            stmt = c.createStatement();
+            ResultSet rs = stmt
+                    .executeQuery("SELECT score FROM coloc_map WHERE key = '"
+                            + key + "';");
+            while (rs.next()) {
+                score = rs.getInt("score");
+            }
+            rs.close();
+            stmt.close();
+            c.close();
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
 
 
-		return score;
+        return score;
 
-	}
+    }
 }
