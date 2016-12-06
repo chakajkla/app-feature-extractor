@@ -75,15 +75,19 @@
         </dependency>
 
         <dependency>
-            <groupId>de.sciss</groupId>
+            <groupId>edu.cmu.lti</groupId>
             <artifactId>jawjaw</artifactId>
-            <version>0.1.0</version>
+            <version>1.0.2</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/jawjaw.jar</systemPath>
         </dependency>
 
         <dependency>
-            <groupId>de.sciss</groupId>
+            <groupId>edu.cmu.lti</groupId>
             <artifactId>ws4j</artifactId>
-            <version>0.1.0</version>
+            <version>1.0.1</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/ws4j.jar</systemPath>
         </dependency>
 		
     </dependencies>
