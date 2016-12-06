@@ -250,7 +250,7 @@ public class NLPUtil {
 
         double verbSimilarity = compute(verb1, verb2);
 
-        if(nounSimilarity == 0 && verbSimilarity == 0){
+        if (nounSimilarity == 0 && verbSimilarity == 0) {
             return sim;
         }
 
@@ -259,7 +259,17 @@ public class NLPUtil {
 
     private static double compute(String word1, String word2) {
         WS4JConfiguration.getInstance().setMFS(true);
-        double s = new WuPalmer(db).calcRelatednessOfWords(word1, word2);
+
+        if (db == null) {
+            db = new NictWordNet();
+        }
+
+        double s = 0;
+        try {
+            s = new WuPalmer(db).calcRelatednessOfWords(word1, word2);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
         return s;
     }
 
