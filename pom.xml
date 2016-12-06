@@ -80,6 +80,8 @@
             <version>1.0.2</version>
             <scope>system</scope>
             <systemPath>${basedir}/lib/jawjaw.jar</systemPath>
+            <type>jar</type>
+            <optional>false</optional>
         </dependency>
 
         <dependency>
@@ -88,6 +90,8 @@
             <version>1.0.1</version>
             <scope>system</scope>
             <systemPath>${basedir}/lib/ws4j.jar</systemPath>
+            <type>jar</type>
+            <optional>false</optional>
         </dependency>
 		
     </dependencies>
