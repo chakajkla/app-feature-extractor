@@ -9,7 +9,7 @@ import server.objects.Bigram;
 
 public class BigramExtractor {
 
-	public static int dist = 6; //window length
+	public static int dist = 5; //window length
 
 	public static List<Bigram> extractBigram(List<String> tokenizedString) {
 

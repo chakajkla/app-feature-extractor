@@ -4,11 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import server.nlp.IndexBuilder.TYPE;
@@ -45,6 +41,8 @@ public class FeatureParser {
 
         allFeatures.addAll(appFeatureDescriptor.getFunctionList());
 
+        Collections.shuffle(allFeatures);
+
         System.out.println("Number of features before reduction: " + allFeatures.size());
 
         ArrayList<FeatureGroup> clusterList = new ArrayList<>();
@@ -65,20 +63,43 @@ public class FeatureParser {
 
             clusterList.add(fg);
 
+            // Collections.shuffle(allFeatures);
         }
 
         //at this point we clear the old list
         appFeatureDescriptor.clearFunctionList();
 
+
+        //score proportion trick
+        double totalScore = 0;
+        for (FeatureGroup fg : clusterList) {
+            totalScore += fg.getAverageScore();
+        }
+
+        for (FeatureGroup fg : clusterList) {
+            int pickSize = (int) ((fg.getAverageScore() / totalScore) * fg.getGroupMembers().size());
+            if(pickSize <= 0){
+                pickSize = 1;
+            }
+            for (AppFeatureDataPoint fe : fg.getAdditionalMembers(pickSize)) {
+                appFeatureDescriptor.addFunctionList(fe);
+            }
+        }
+
+
         // process FG
         // Unique_Key -> AppFeatureDataPoint
-        Map<String, AppFeatureDataPoint> featureReducedMap = new HashMap<String, AppFeatureDataPoint>();
-        for (FeatureGroup fg : clusterList) {
-//			for (AppFeatureDataPoint dp : fg.getGroupMembers()) {
-//				featureReducedMap.put(dp.getUniqueName(), fg.getGroupLeader());
-//			}
-            appFeatureDescriptor.addFunctionList(fg.getGroupLeader());
-        }
+//        Map<String, AppFeatureDataPoint> featureReducedMap = new HashMap<String, AppFeatureDataPoint>();
+//        for (FeatureGroup fg : clusterList) {
+////			for (AppFeatureDataPoint dp : fg.getGroupMembers()) {
+////				featureReducedMap.put(dp.getUniqueName(), fg.getGroupLeader());
+////			}
+//            appFeatureDescriptor.addFunctionList(fg.getGroupLeader());
+//
+//            for (AppFeatureDataPoint fe : fg.getAdditionalMembers()) {
+//                appFeatureDescriptor.addFunctionList(fe);
+//            }
+//        }
 
 //		for (String key : appFeatureMap.keySet()) {
 //			for (AppFeatureDataPoint dp : appFeatureMap.get(key)
@@ -132,11 +153,14 @@ public class FeatureParser {
             boolean status = checkFeature(bg.getVerb(), bg.getNoun(), tagged,
                     negVerbDict);
 
-            /**
-             * Chi-Square Pearson check at 0.005
-             */
-            if (NgramScore < 7.88)
-                status = false;
+//            /**
+//             * Chi-Square Pearson check at 0.005
+//             */
+//            if (NgramScore < 7.88)
+
+            //average 3.4077
+//            if (NgramScore <= 3.4077)
+//                status = false;
 
             if (status) {
 
@@ -166,6 +190,12 @@ public class FeatureParser {
 
         }
 
+        //re-scoring based on most frequent NN
+        setNNScore(ap);
+
+        //normalize scores
+        // Apply softmax to feature scores
+        ap = FeatureParser.applyScoreFilter(ap);
 
         //clustering of features
         try {
@@ -174,7 +204,23 @@ public class FeatureParser {
             e.printStackTrace();
         }
 
-        return null;
+        return ap;
+
+    }
+
+    private static void setNNScore(AppFeatureDescriptor ap) {
+        Map<String, Double> histogram = new HashMap<>();
+        for (AppFeatureDataPoint fe : ap.getFunctionList()) {
+            if (!histogram.containsKey(fe.getNoun())) {
+                histogram.put(fe.getNoun(), 1d);
+            } else {
+                histogram.put(fe.getNoun(), histogram.get(fe.getNoun()) + 1);
+            }
+        }
+
+        for (AppFeatureDataPoint fe : ap.getFunctionList()) {
+            fe.setNnFreqScore(histogram.get(fe.getNoun()));
+        }
 
     }
 
@@ -275,7 +321,8 @@ public class FeatureParser {
             // check if second component is NN
             String[] sp = tagged.split("\\s");
 
-            if (sp[1].contains("NN")) {
+            //strictly VB-NN pair
+            if (sp[1].contains("NN") && sp[0].contains("VB")) {
                 return true;
             }
 

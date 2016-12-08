@@ -4,97 +4,106 @@ import server.nlp.NLPUtil;
 
 public class AppFeatureDataPoint implements Comparable<AppFeatureDataPoint> {
 
-	private String name;
-	private String uniqueName;
-	private String verb;
-	private String noun;
+    private String name;
+    private String uniqueName;
+    private String verb;
+    private String noun;
 
-	private double ngramScore;
-	private double tfScore;
+    private double ngramScore;
+    private double tfScore;
+    private double nnFreqScore;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getVerb() {
-		return verb;
-	}
+    public String getVerb() {
+        return verb;
+    }
 
-	public void setVerb(String verb) {
-		this.verb = process(verb);
-	}
+    public void setVerb(String verb) {
+        this.verb = process(verb);
+    }
 
-	public String getNoun() {
-		return noun;
-	}
+    public String getNoun() {
+        return noun;
+    }
 
-	public void setNoun(String noun) {
-		this.noun = process(noun);
-	}
+    public void setNoun(String noun) {
+        this.noun = process(noun);
+    }
 
-	private String process(String w) {
-		return w.toLowerCase();
-	}
+    private String process(String w) {
+        return w.toLowerCase();
+    }
 
-	public double getNgramScore() {
-		return ngramScore;
-	}
+    public double getNgramScore() {
+        return ngramScore;
+    }
 
-	public void setNgramScore(double ngramScore) {
-		this.ngramScore = ngramScore;
-	}
+    public void setNgramScore(double ngramScore) {
+        this.ngramScore = ngramScore;
+    }
 
-	public double getTfScore() {
-		return tfScore;
-	}
+    public double getTfScore() {
+        return tfScore;
+    }
 
-	public void setTfScore(double tfScore) {
-		this.tfScore = tfScore;
-	}
+    public void setTfScore(double tfScore) {
+        this.tfScore = tfScore;
+    }
 
-	public void setUniqueName(int featureCount) {
-		this.uniqueName = this.name + "_" + featureCount;
+    public double getNnFreqScoreScore() {
+        return nnFreqScore;
+    }
 
-	}
+    public void setNnFreqScore(double nnScore) {
+        this.nnFreqScore = nnScore;
+    }
 
-	public String getUniqueName() {
-		return uniqueName;
-	}
+    public void setUniqueName(int featureCount) {
+        this.uniqueName = this.name + "_" + featureCount;
 
-	@Override
-	public int compareTo(AppFeatureDataPoint other) {
+    }
 
-		double thisScore = this.ngramScore * this.tfScore;
-		double otherScore = other.ngramScore * other.tfScore;
+    public String getUniqueName() {
+        return uniqueName;
+    }
 
-		if (thisScore > otherScore) {
-			return 1;
-		} else if (thisScore == otherScore) {
-			return 0;
-		}
+    @Override
+    public int compareTo(AppFeatureDataPoint other) {
 
-		return -1;
-	}
+        double thisScore = this.getScore(); //this.ngramScore * this.tfScore;
+        double otherScore = other.getScore(); //other.ngramScore * other.tfScore;
 
-	public boolean isEqual(AppFeatureDataPoint other) {
-		return NLPUtil.checkFeatureEquality(this, other);
-	}
+        if (thisScore > otherScore) {
+            return 1;
+        } else if (thisScore == otherScore) {
+            return 0;
+        }
 
-	public String toString() {
-		return this.verb + "_" + this.noun + "_" + this.ngramScore + "_"
-				+ this.tfScore;
-	}
+        return -1;
+    }
 
-	public double getScore() {
-		return this.ngramScore * this.tfScore;
-	}
-	
-	public String getFeature() {
-		return this.verb + " " + this.noun;
-	}
+    public boolean isEqual(AppFeatureDataPoint other) {
+        return NLPUtil.checkFeatureEquality(this, other);
+    }
+
+    public String toString() {
+        return this.verb + "_" + this.noun + "_" + this.ngramScore + "_"
+                + this.tfScore + "_" + this.nnFreqScore;
+    }
+
+    public double getScore() {
+        return (this.ngramScore * 0.2) + ( this.tfScore * 0.2 ) + (this.nnFreqScore * 0.6);
+    }
+
+    public String getFeature() {
+        return this.verb + " " + this.noun;
+    }
 
 }

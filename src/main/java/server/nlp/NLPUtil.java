@@ -43,7 +43,7 @@ import edu.cmu.lti.ws4j.util.WS4JConfiguration;
 
 public class NLPUtil {
 
-    private static final double semanticSimilarityThreshold = 0.5;
+    private static final double semanticSimilarityThreshold = 0.65;
     private static ILexicalDatabase db = new NictWordNet();
 
     public static List<String> tokenizeString(String text) {
@@ -91,6 +91,7 @@ public class NLPUtil {
             String featureString = NLPUtil.constructString(NLPUtil
                     .lemmatize(sentence));
 
+            //check that the string is not single worded
             if (!NLPUtil.checkDuplication(featureString)) {
                 cleanSentences.add(featureString);
             }
@@ -227,7 +228,7 @@ public class NLPUtil {
     public static boolean checksynonymnDistance(String w1_verb, String w1_noun,
                                                 String w2_verb, String w2_noun) {
 
-        // check quality
+        // check equality
         if (w1_verb.equals(w2_verb) && w1_noun.equals(w2_noun)) {
             return true;
         }
