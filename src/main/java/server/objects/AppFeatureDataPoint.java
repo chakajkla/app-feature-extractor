@@ -94,7 +94,7 @@ public class AppFeatureDataPoint implements Comparable<AppFeatureDataPoint> {
 	}
 	
 	public String getFeature() {
-		return this.verb + "_" + this.noun;
+		return this.verb + " " + this.noun;
 	}
 
 }
