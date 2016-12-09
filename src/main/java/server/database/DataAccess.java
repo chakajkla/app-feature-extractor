@@ -225,7 +225,7 @@ public class DataAccess {
             c = DriverManager.getConnection("jdbc:sqlite:"
                     + PathStorage.databasePath);
             c.setAutoCommit(false);
-            System.out.println("Searching coloc score...");
+            //System.out.println("Searching coloc score...");
 
             stmt = c.createStatement();
             ResultSet rs = stmt

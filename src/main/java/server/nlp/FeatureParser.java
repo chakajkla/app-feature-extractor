@@ -43,7 +43,30 @@ public class FeatureParser {
 
         Collections.shuffle(allFeatures);
 
+        System.out.println("Number of features before filter: " + allFeatures.size());
+
+
+        Collections.sort(allFeatures);
+
+        //filter by average score
+        double av = 0;
+        for (AppFeatureDataPoint fe : allFeatures) {
+            av += fe.getScore();
+        }
+        av /= (double) allFeatures.size();
+        System.out.println("Average score = " + av);
+        ArrayList<AppFeatureDataPoint> newFeatures = new ArrayList<>();
+        for (int i = 0; i < allFeatures.size(); i++) {
+            AppFeatureDataPoint fe = allFeatures.get(i);
+            if (fe.getScore() >= av) {
+                newFeatures.add(fe);
+            }
+        }
+        allFeatures.clear();
+        allFeatures.addAll(newFeatures);
+
         System.out.println("Number of features before reduction: " + allFeatures.size());
+
 
         ArrayList<FeatureGroup> clusterList = new ArrayList<>();
         while (!allFeatures.isEmpty()) {
@@ -78,7 +101,7 @@ public class FeatureParser {
 
         for (FeatureGroup fg : clusterList) {
             int pickSize = (int) ((fg.getAverageScore() / totalScore) * fg.getGroupMembers().size());
-            if(pickSize <= 0){
+            if (pickSize <= 0) {
                 pickSize = 1;
             }
             for (AppFeatureDataPoint fe : fg.getAdditionalMembers(pickSize)) {
@@ -192,6 +215,7 @@ public class FeatureParser {
 
         //re-scoring based on most frequent NN
         setNNScore(ap);
+        setVBScore(ap);
 
         //normalize scores
         // Apply softmax to feature scores
@@ -220,6 +244,22 @@ public class FeatureParser {
 
         for (AppFeatureDataPoint fe : ap.getFunctionList()) {
             fe.setNnFreqScore(histogram.get(fe.getNoun()));
+        }
+
+    }
+
+    private static void setVBScore(AppFeatureDescriptor ap) {
+        Map<String, Double> histogram = new HashMap<>();
+        for (AppFeatureDataPoint fe : ap.getFunctionList()) {
+            if (!histogram.containsKey(fe.getVerb())) {
+                histogram.put(fe.getVerb(), 1d);
+            } else {
+                histogram.put(fe.getVerb(), histogram.get(fe.getVerb()) + 1);
+            }
+        }
+
+        for (AppFeatureDataPoint fe : ap.getFunctionList()) {
+            fe.setVbFreqScore(histogram.get(fe.getVerb()));
         }
 
     }
@@ -298,6 +338,7 @@ public class FeatureParser {
             return false;
         }
 
+        boolean status = false;
         String path = "data" + File.separator + "dict";
         URL url;
         try {
@@ -318,19 +359,21 @@ public class FeatureParser {
 
             dict.close();
 
-            // check if second component is NN
-            String[] sp = tagged.split("\\s");
-
-            //strictly VB-NN pair
-            if (sp[1].contains("NN") && sp[0].contains("VB")) {
-                return true;
-            }
+            status = true;
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (NullPointerException e) {
-            return false;
+
+        }
+
+        // check if second component is NN
+        String[] sp = tagged.split("\\s");
+
+        //strictly VB-NN pair
+        if ((sp[1].contains("NN") && sp[0].contains("VB")) && status) {
+            return true;
         }
 
         return false;

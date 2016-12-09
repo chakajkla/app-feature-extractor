@@ -12,6 +12,7 @@ public class AppFeatureDataPoint implements Comparable<AppFeatureDataPoint> {
     private double ngramScore;
     private double tfScore;
     private double nnFreqScore;
+    private double vbFreqScore;
 
     public String getName() {
         return name;
@@ -65,6 +66,14 @@ public class AppFeatureDataPoint implements Comparable<AppFeatureDataPoint> {
         this.nnFreqScore = nnScore;
     }
 
+    public double getVbFreqScoreScore() {
+        return vbFreqScore;
+    }
+
+    public void setVbFreqScore(double vbScore) {
+        this.vbFreqScore = vbScore;
+    }
+
     public void setUniqueName(int featureCount) {
         this.uniqueName = this.name + "_" + featureCount;
 
@@ -99,7 +108,7 @@ public class AppFeatureDataPoint implements Comparable<AppFeatureDataPoint> {
     }
 
     public double getScore() {
-        return (this.ngramScore * 0.2) + ( this.tfScore * 0.2 ) + (this.nnFreqScore * 0.6);
+        return (this.ngramScore * 0.4) + (this.tfScore * 0.1) + (this.nnFreqScore * 0.4) /*+ (this.vbFreqScore * 0.1)*/;
     }
 
     public String getFeature() {
