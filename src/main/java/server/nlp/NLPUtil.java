@@ -82,6 +82,7 @@ public class NLPUtil {
 
         List<String> tokenizer = NLPUtil.tokenizeString(text);
 
+        //we test to include stop words for detecting phrasal noun/verb
         tokenizer = NLPUtil.removeBadWords(tokenizer);
 
         ArrayList<String> cleanSentences = new ArrayList<>();
@@ -141,7 +142,7 @@ public class NLPUtil {
         BufferedReader br;
         try {
             br = new BufferedReader(
-                    new FileReader("data/stopwords_ranksnl.txt"));
+                    new FileReader("data/stopwords_ranksnl_2.txt"));
 
             String d = "";
 
@@ -341,8 +342,9 @@ public class NLPUtil {
     }
 
     public static double getBigramColocScore(Bigram bg) {
-
-        return DataAccess.getColocScore(bg.toKey());
+        //we take average of both the phrasal verb + verb/noun pair
+        double sum = (DataAccess.getColocScore(bg.toKey()) + DataAccess.getColocScore(bg.toVerbKey()));
+        return sum > 0 ? sum / 2 : 0;
 
     }
 

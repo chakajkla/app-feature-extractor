@@ -148,6 +148,14 @@ public class FeatureParser {
     private static MaxentTagger tagger = null;
     private static DependencyParser parser = null;
 
+    public static String tagString(String input) {
+        if (tagger == null) {
+            tagger = new MaxentTagger(
+                    "data/postagger/english-bidirectional-distsim.tagger");
+        }
+        return tagger.tagString(input);
+    }
+
     public static AppFeatureDescriptor preprocessAppFeature(
             List<Bigram> bigrams, String description, String name) {
 
@@ -155,10 +163,7 @@ public class FeatureParser {
         ap.setDescription(description);
         ap.setName(name);
 
-        if (tagger == null) {
-            tagger = new MaxentTagger(
-                    "data/postagger/english-bidirectional-distsim.tagger");
-        }
+
         if (parser == null) {
             parser = DependencyParser
                     .loadFromModelFile(DependencyParser.DEFAULT_MODEL);
@@ -171,7 +176,7 @@ public class FeatureParser {
 
             double NgramScore = getBigramScore(bg); //colocation score calculated separately using Python
 
-            String tagged = tagger.tagString(bg.toString());
+            String tagged = tagString(bg.toString());
 
             boolean status = checkFeature(bg.getVerb(), bg.getNoun(), tagged,
                     negVerbDict);
@@ -222,11 +227,11 @@ public class FeatureParser {
         ap = FeatureParser.applyScoreFilter(ap);
 
         //clustering of features
-        try {
-            return clusterFeatureMap(ap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            return clusterFeatureMap(ap);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         return ap;
 
@@ -341,11 +346,12 @@ public class FeatureParser {
         boolean status = false;
         String path = "data" + File.separator + "dict";
         URL url;
+        // construct the dictionary object and open it
+        IDictionary dict = null;
         try {
             url = new URL("file", null, path);
 
-            // construct the dictionary object and open it
-            IDictionary dict = new Dictionary(url);
+            dict = new Dictionary(url);
 
             dict.open();
 
@@ -357,7 +363,6 @@ public class FeatureParser {
             idxWord = dict.getIndexWord(noun, POS.NOUN);
             idxWord.getWordIDs().get(0);
 
-            dict.close();
 
             status = true;
 
@@ -366,6 +371,10 @@ public class FeatureParser {
             e.printStackTrace();
         } catch (NullPointerException e) {
 
+        } finally {
+            if (dict != null) {
+                dict.close();
+            }
         }
 
         // check if second component is NN
