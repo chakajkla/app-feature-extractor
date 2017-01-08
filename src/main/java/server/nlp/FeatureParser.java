@@ -192,11 +192,15 @@ public class FeatureParser {
                 // search using only noun
                 double indexScore = 0;
                 try {
-                    indexScore = IndexBuilder.getIndexScore(bg.getVerb() + " "
-                            + bg.getNoun(), name, TYPE.android);
+                    indexScore += IndexBuilder.getIndexScore(bg.toString(), name, TYPE.android);
+                    if (!bg.isSingleVerb()) {
+                        indexScore += IndexBuilder.getIndexScore(bg.toVerbString(), name, TYPE.android);
+                        indexScore /= 2;
+                    }
+
                 } catch (Exception e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
+                    indexScore = 0;
                 }
                 // System.out.println(status + "__" + tagged
                 // + "  __ NGramScore: " + NgramScore
@@ -393,7 +397,7 @@ public class FeatureParser {
         //strictly VB-NN pair or VB-Particle/Preposition pair
         if (((sp[1].contains("NN") && sp[0].contains("VB")) //normal case
                 || (verbSp[0].contains("VB")) // phrasal verb case
-                || (rawVerbSp.length == 2 ? rawVerbSp[0].contains("VB") : false) //raw verb case
+                || (rawVerbSp != null && rawVerbSp.length == 2 ? rawVerbSp[0].contains("VB") : false) //raw verb case
         )
                 && status) {
             return true;
