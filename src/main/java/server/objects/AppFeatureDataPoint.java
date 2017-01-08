@@ -9,10 +9,29 @@ public class AppFeatureDataPoint implements Comparable<AppFeatureDataPoint> {
     private String verb;
     private String noun;
 
+    private String preposition;
+    private String particle;
+
     private double ngramScore;
     private double tfScore;
     private double nnFreqScore;
     private double vbFreqScore;
+
+    public String getPreposition() {
+        return preposition;
+    }
+
+    public void setPreposition(String preposition) {
+        this.preposition = preposition;
+    }
+
+    public String getParticle() {
+        return particle;
+    }
+
+    public void setParticle(String particle) {
+        this.particle = particle;
+    }
 
     public String getName() {
         return name;
@@ -112,6 +131,10 @@ public class AppFeatureDataPoint implements Comparable<AppFeatureDataPoint> {
     }
 
     public String getFeature() {
+        if (this.preposition != null & this.particle != null) {
+            String secondPart = this.preposition != null ? this.preposition : this.particle;
+            return this.verb + "-" + secondPart + " " + this.noun;
+        }
         return this.verb + " " + this.noun;
     }
 

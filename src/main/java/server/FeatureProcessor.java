@@ -74,7 +74,7 @@ public class FeatureProcessor {
         IndexBuilder.addIndex(processed_desc, name, TYPE.android);
 
         List<Bigram> bigrams = BigramExtractor
-                .extractBigram(tokenizedString);
+                .extractBigram(tokenizedString, description);
         AppFeatureDescriptor featurelist = FeatureParser.preprocessAppFeature(bigrams,
                 description, name);
 

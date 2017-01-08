@@ -7,10 +7,19 @@ public class Bigram {
 
     private String preposition;
     private String particle;
+    private String rawVerb;
 
     public Bigram(String v, String n) {
         this.verb = v;
         this.noun = n;
+    }
+
+    public String getRawVerb() {
+        return rawVerb;
+    }
+
+    public void setRawVerb(String rawVerb) {
+        this.rawVerb = rawVerb;
     }
 
     public String getPreposition() {
@@ -46,15 +55,39 @@ public class Bigram {
     }
 
     public String toString() {
-        return this.verb + "-" + this.preposition != null ? this.preposition : this.particle + " " + this.noun;
+        return this.verb + " " + this.noun;
     }
 
+    public String toVerbString() {
+        if (isSingleVerb()) {
+            return this.verb;
+        }
+        String secondPart = this.preposition != null ? this.preposition : this.particle;
+        return this.verb + " " + secondPart;
+    }
+
+    public String toRawVerbString() {
+        if (this.rawVerb != null) {
+            return this.rawVerb + " " + this.noun;
+        }
+        return null;
+    }
+
+    //key used or searchig coloc score
     public String toKey() {
         return this.verb + "_" + this.noun;
     }
 
     public String toVerbKey() {
-        return this.verb + "_" + this.preposition != null ? this.preposition : this.particle;
+        if (isSingleVerb()) {
+            return null;
+        }
+        String secondPart = this.preposition != null ? this.preposition : this.particle;
+        return this.verb + "_" + secondPart;
+    }
+
+    public boolean isSingleVerb() {
+        return this.preposition == null && this.particle == null;
     }
 
 }

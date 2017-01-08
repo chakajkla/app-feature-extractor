@@ -176,10 +176,7 @@ public class FeatureParser {
 
             double NgramScore = getBigramScore(bg); //colocation score calculated separately using Python
 
-            String tagged = tagString(bg.toString());
-
-            boolean status = checkFeature(bg.getVerb(), bg.getNoun(), tagged,
-                    negVerbDict);
+            boolean status = checkFeature(bg, negVerbDict);
 
 //            /**
 //             * Chi-Square Pearson check at 0.005
@@ -209,6 +206,8 @@ public class FeatureParser {
                 app_feature.setName(name);
                 app_feature.setVerb(bg.getVerb());
                 app_feature.setNoun(bg.getNoun());
+                app_feature.setParticle(bg.getParticle());
+                app_feature.setPreposition(bg.getPreposition());
                 app_feature.setNgramScore(NgramScore);
                 app_feature.setTfScore(indexScore);
 
@@ -332,8 +331,15 @@ public class FeatureParser {
         return processList;
     }
 
-    private static boolean checkFeature(String verb, String noun,
-                                        String tagged, HashSet<String> negVerbDict) {
+    private static boolean checkFeature(Bigram bg, HashSet<String> negVerbDict) {
+
+        String verb = bg.getVerb();
+        String noun = bg.getNoun();
+        String rawVerbString = bg.toRawVerbString();
+
+        String tagged = tagString(bg.toString());
+        String taggedVerb = tagString(bg.toVerbString());
+        String taggedRawVerb = rawVerbString != null ? tagString(rawVerbString) : null;
 
         if (noun.length() <= 1 || verb.length() <= 1) {
             return false;
@@ -363,7 +369,6 @@ public class FeatureParser {
             idxWord = dict.getIndexWord(noun, POS.NOUN);
             idxWord.getWordIDs().get(0);
 
-
             status = true;
 
         } catch (IOException e) {
@@ -379,9 +384,18 @@ public class FeatureParser {
 
         // check if second component is NN
         String[] sp = tagged.split("\\s");
+        String[] verbSp = taggedVerb.split("\\s");
+        String[] rawVerbSp = null;
+        if (taggedRawVerb != null) {
+            rawVerbSp = taggedRawVerb.split("\\s");
+        }
 
-        //strictly VB-NN pair
-        if ((sp[1].contains("NN") && sp[0].contains("VB")) && status) {
+        //strictly VB-NN pair or VB-Particle/Preposition pair
+        if (((sp[1].contains("NN") && sp[0].contains("VB")) //normal case
+                || (verbSp[0].contains("VB")) // phrasal verb case
+                || (rawVerbSp.length == 2 ? rawVerbSp[0].contains("VB") : false) //raw verb case
+        )
+                && status) {
             return true;
         }
 

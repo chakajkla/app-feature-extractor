@@ -343,7 +343,13 @@ public class NLPUtil {
 
     public static double getBigramColocScore(Bigram bg) {
         //we take average of both the phrasal verb + verb/noun pair
-        double sum = (DataAccess.getColocScore(bg.toKey()) + DataAccess.getColocScore(bg.toVerbKey()));
+        String verbKey = bg.toVerbKey();
+        double sum;
+        if (verbKey != null) {
+            sum = (DataAccess.getColocScore(bg.toKey()) + DataAccess.getColocScore(verbKey));
+        } else {
+            return DataAccess.getColocScore(bg.toKey());
+        }
         return sum > 0 ? sum / 2 : 0;
 
     }

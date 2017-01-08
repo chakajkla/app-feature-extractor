@@ -17,9 +17,9 @@ import java.util.List;
 
 public class ExtractionEvaluator {
 
-//    public static void main(String[] args) {
-//        tagTest();
-//    }
+    public static void mainner(String[] args) {
+        tagTest();
+    }
 
 //    public static void main(String[] args) {
 //
@@ -138,6 +138,8 @@ public class ExtractionEvaluator {
         tagged = FeatureParser.tagString("service for watching TV episodes");
         System.out.println(tagged);
         tagged = FeatureParser.tagString("rate tv");
+        System.out.println(tagged);
+        tagged = FeatureParser.tagString("watched over");
         System.out.println(tagged);
     }
 
