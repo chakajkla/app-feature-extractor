@@ -138,7 +138,7 @@ public class DataAccess {
             stmt = c.createStatement();
 
             for (AppFeatureDataPoint dp : featurelist.getFunctionList()) {
-                String sql = "INSERT INTO features (app_name, verb, noun, col_score, tfidf_score) "
+                String sql = "INSERT INTO features (app_name, verb, noun, preposition, particle, col_score, tfidf_score) "
                         + "VALUES ("
                         + "\""
                         + featurelist.getName()
@@ -148,6 +148,12 @@ public class DataAccess {
                         + "\" "
                         + ", \""
                         + dp.getNoun()
+                        + "\" "
+                        + ", \""
+                        + dp.getPreposition() != null ? dp.getPreposition() : " "
+                        + "\" "
+                        + ", \""
+                        + dp.getParticle() != null ? dp.getParticle() : " "
                         + "\" "
                         + ", "
                         + dp.getNgramScore()
@@ -196,6 +202,8 @@ public class DataAccess {
                 app_feature.setName(packageID);
                 app_feature.setVerb(rs.getString("verb"));
                 app_feature.setNoun(rs.getString("noun"));
+                app_feature.setPreposition(rs.getString("preposition"));
+                app_feature.setParticle(rs.getString("particle"));
                 app_feature.setNgramScore(rs.getDouble("col_score"));
                 app_feature.setTfScore(rs.getDouble("tfidf_score"));
 
