@@ -8,10 +8,19 @@ public class Bigram {
     private String preposition;
     private String particle;
     private String rawVerb;
+    private String adverb;
 
     public Bigram(String v, String n) {
         this.verb = v;
         this.noun = n;
+    }
+
+    public String getAdverb() {
+        return adverb;
+    }
+
+    public void setAdverb(String adverb) {
+        this.adverb = adverb;
     }
 
     public String getRawVerb() {

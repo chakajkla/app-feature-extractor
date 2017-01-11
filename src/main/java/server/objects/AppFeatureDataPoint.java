@@ -126,8 +126,10 @@ public class AppFeatureDataPoint implements Comparable<AppFeatureDataPoint> {
                 + this.tfScore + "_" + this.nnFreqScore;
     }
 
+    //prev : 0.4 0.1 0.4
     public double getScore() {
-        return (this.ngramScore * 0.4) + (this.tfScore * 0.1) + (this.nnFreqScore * 0.4) /*+ (this.vbFreqScore * 0.1)*/;
+       // return ((this.ngramScore * 0.6) + (this.tfScore * 0.4) + (this.nnFreqScore * 0.2) )/3/*+ (this.vbFreqScore * 0.1)*/;
+        return (this.ngramScore  + this.tfScore + this.nnFreqScore )/3;
     }
 
     public String getFeature() {

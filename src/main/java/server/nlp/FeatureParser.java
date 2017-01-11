@@ -227,7 +227,7 @@ public class FeatureParser {
 
         //normalize scores
         // Apply softmax to feature scores
-        ap = FeatureParser.applyScoreFilter(ap);
+        //ap = FeatureParser.applyScoreFilter(ap);
 
         //clustering of features
 //        try {
@@ -249,6 +249,7 @@ public class FeatureParser {
                 histogram.put(fe.getNoun(), histogram.get(fe.getNoun()) + 1);
             }
         }
+
 
         for (AppFeatureDataPoint fe : ap.getFunctionList()) {
             fe.setNnFreqScore(histogram.get(fe.getNoun()));
@@ -337,6 +338,10 @@ public class FeatureParser {
 
     private static boolean checkFeature(Bigram bg, HashSet<String> negVerbDict) {
 
+        if (bg.getAdverb() != null) {
+            return false;
+        }
+
         String verb = bg.getVerb();
         String noun = bg.getNoun();
         String rawVerbString = bg.toRawVerbString();
@@ -396,14 +401,44 @@ public class FeatureParser {
 
         //strictly VB-NN pair or VB-Particle/Preposition pair
         if (((sp[1].contains("NN") && sp[0].contains("VB")) //normal case
-                || (verbSp[0].contains("VB")) // phrasal verb case
-                || (rawVerbSp != null && rawVerbSp.length == 2 ? rawVerbSp[0].contains("VB") : false) //raw verb case
+                || (sp[1].contains("NN") && verbSp[0].contains("VB")) // phrasal verb case
+                || (rawVerbSp != null && rawVerbSp.length == 2 ? sp[1].contains("NN") && rawVerbSp[0].contains("VB") : false) //raw verb case
         )
                 && status) {
             return true;
         }
 
         return false;
+    }
+
+    public static AppFeatureDescriptor applyScoreNormalization(
+            AppFeatureDescriptor featurelist) {
+
+        if (featurelist == null || featurelist.getFunctionList() == null) {
+            return null;
+        }
+        //normalize to 0-1
+        double min1 = Double.MAX_VALUE;
+        double min2 = Double.MAX_VALUE;
+        double min3 = Double.MAX_VALUE;
+        double max1 = 0;
+        double max2 = 0;
+        double max3 = 0;
+        for (AppFeatureDataPoint dp : featurelist.getFunctionList()) {
+            min1 = Math.min(min1, dp.getTfScore());
+            max1 = Math.max(max1, dp.getTfScore());
+            min2 = Math.min(min2, dp.getNgramScore());
+            max2 = Math.max(max2, dp.getNgramScore());
+            min3 = Math.min(min3, dp.getNnFreqScoreScore());
+            max3 = Math.max(max3, dp.getNnFreqScoreScore());
+        }
+        for (AppFeatureDataPoint dp : featurelist.getFunctionList()) {
+            dp.setTfScore((dp.getTfScore() - min1) / (max1 - min1));
+            dp.setNgramScore((dp.getNgramScore() - min2) / (max2 - min2));
+            dp.setNnFreqScore((dp.getNnFreqScoreScore() - min3) / (max3 - min3));
+        }
+
+        return featurelist;
     }
 
     public static AppFeatureDescriptor applyScoreFilter(
@@ -415,13 +450,14 @@ public class FeatureParser {
 
         double[] tfscore = new double[featurelist.getFunctionList().size()];
         double[] ngramscore = new double[featurelist.getFunctionList().size()];
+        double[] nnCtscore = new double[featurelist.getFunctionList().size()];
 
         for (int i = 0; i < featurelist.getFunctionList().size(); i++) {
 
             AppFeatureDataPoint dp = featurelist.getFunctionList().get(i);
             tfscore[i] = dp.getTfScore();
             ngramscore[i] = dp.getNgramScore();
-
+            nnCtscore[i] = dp.getNnFreqScoreScore();
             // System.out.println(dp.toString() + "\n\n");
 
         }
@@ -429,12 +465,14 @@ public class FeatureParser {
         // softmax
         tfscore = softmax(tfscore);
         ngramscore = softmax(ngramscore);
+        nnCtscore = softmax(nnCtscore);
 
         for (int i = 0; i < featurelist.getFunctionList().size(); i++) {
 
             AppFeatureDataPoint dp = featurelist.getFunctionList().get(i);
             dp.setTfScore(tfscore[i]);
             dp.setNgramScore(ngramscore[i]);
+            dp.setNnFreqScore(nnCtscore[i]);
 
             // System.out.println(dp.toString() + "\n");
 
