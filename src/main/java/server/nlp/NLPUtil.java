@@ -259,6 +259,88 @@ public class NLPUtil {
         return (nounSimilarity + verbSimilarity) / 2;
     }
 
+//    public static void main(String[] args){
+//        double score = calculateSemanticSimilarity("compose new email","create new email");
+//        //score = calculateSemanticSimilarity("add image","delete image");
+//        System.out.println(score);
+//    }
+
+    private static double calculateSemanticSimilarity(String sen1, String sen2) {
+
+        String[] words1 = sen1.split("\\s");
+        String[] words2 = sen2.split("\\s");
+
+        HashSet<String> wordSet = new HashSet<>();
+        HashSet<String> w1Set = new HashSet<>();
+        HashSet<String> w2Set = new HashSet<>();
+        for (String w : words1) {
+            wordSet.add(w);
+            w1Set.add(w);
+        }
+        for (String w : words2) {
+            wordSet.add(w);
+            w2Set.add(w);
+        }
+        ArrayList<String> wordList = new ArrayList<>();
+        wordList.addAll(wordSet);
+
+        double threshold = 0.6;
+
+        //extract for sen1
+        double[] word1vector = new double[wordList.size()];
+        for (int i = 0; i < wordList.size(); i++) {
+
+            String w = wordList.get(i);
+            if (w1Set.contains(w)) {
+                word1vector[i] = 1;
+            } else {
+                double max_sim = Double.MIN_VALUE;
+
+                for (String words : w1Set) {
+                    max_sim = Math.max(max_sim, compute(words,w));
+                }
+
+                word1vector[i] = max_sim > threshold ? max_sim : 0;
+            }
+
+        }
+
+        double[] word2vector = new double[wordList.size()];
+        for (int i = 0; i < wordList.size(); i++) {
+
+            String w = wordList.get(i);
+            if (w2Set.contains(w)) {
+                word2vector[i] = 1;
+            } else {
+                double max_sim = Double.MIN_VALUE;
+
+                for (String words : w2Set) {
+                    max_sim = Math.max(max_sim, compute(words,w));
+                }
+
+                word2vector[i] = max_sim > threshold ? max_sim : 0;
+            }
+
+        }
+
+
+        return getCosineSimilarity(word1vector,word2vector);
+    }
+
+    private static double getCosineSimilarity(double[] vectorA, double[] vectorB) {
+
+        double dotProduct = 0.0;
+        double normA = 0.0;
+        double normB = 0.0;
+        for (int i = 0; i < vectorA.length; i++) {
+            dotProduct += vectorA[i] * vectorB[i];
+            normA += Math.pow(vectorA[i], 2);
+            normB += Math.pow(vectorB[i], 2);
+        }
+        return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+
+    }
+
     private static double compute(String word1, String word2) {
         WS4JConfiguration.getInstance().setMFS(true);
 
@@ -387,5 +469,5 @@ public class NLPUtil {
 
         return false;
     }
-    
+
 }

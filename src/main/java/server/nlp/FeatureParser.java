@@ -404,7 +404,7 @@ public class FeatureParser {
                 || (sp[1].contains("NN") && verbSp[0].contains("VB")) // phrasal verb case
                 || (rawVerbSp != null && rawVerbSp.length == 2 ? sp[1].contains("NN") && rawVerbSp[0].contains("VB") : false) //raw verb case
         )
-                && status) {
+                || status) {
             return true;
         }
 

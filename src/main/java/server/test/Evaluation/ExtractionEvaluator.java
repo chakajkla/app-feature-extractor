@@ -1,6 +1,10 @@
 package server.test.Evaluation;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import edu.mit.jwi.Dictionary;
+import edu.mit.jwi.IDictionary;
+import edu.mit.jwi.item.IIndexWord;
+import edu.mit.jwi.item.POS;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import server.FeatureProcessor;
 import server.nlp.FeatureParser;
@@ -10,6 +14,7 @@ import server.objects.AppFeatureDescriptor;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -19,11 +24,11 @@ import static server.nlp.FeatureParser.applyScoreNormalization;
 
 public class ExtractionEvaluator {
 
-    public static void mainn3(String[] args) {
+    public static void main5(String[] args) {
         tagTest();
     }
 
-    public static void mainn(String[] args) {
+    public static void main2(String[] args) {
 
         File descDir = new File("data/evaluation/apps");
         File goldenDir = new File("data/evaluation/apps/features");
@@ -156,8 +161,35 @@ public class ExtractionEvaluator {
         System.out.println(tagged);
         tagged = FeatureParser.tagString("rate tv");
         System.out.println(tagged);
-        tagged = FeatureParser.tagString("watched over");
+        tagged = FeatureParser.tagString("Share updates, photos and videos");
         System.out.println(tagged);
+//
+//        String path = "data" + File.separator + "dict";
+//        URL url;
+//        // construct the dictionary object and open it
+//        IDictionary dict = null;
+//        try {
+//            url = new URL("file", null, path);
+//
+//            dict = new Dictionary(url);
+//
+//            dict.open();
+//
+//            // get verb
+//            IIndexWord idxWord = dict.getIndexWord("share", POS.VERB);
+//            idxWord.getWordIDs().get(0);
+//
+//
+//        } catch (IOException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } catch (NullPointerException e) {
+//
+//        } finally {
+//            if (dict != null) {
+//                dict.close();
+//            }
+//        }
 
         tagged = FeatureParser.tagString("You won’t need to delete messages to save space.");
         System.out.println(tagged);
