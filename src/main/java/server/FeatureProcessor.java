@@ -133,6 +133,8 @@ public class FeatureProcessor {
                                 }
 
                             }
+
+                            featureLists.add(featurePts);
                         }
 
                     });
