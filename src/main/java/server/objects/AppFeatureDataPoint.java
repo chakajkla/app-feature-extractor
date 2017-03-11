@@ -12,10 +12,10 @@ public class AppFeatureDataPoint implements Comparable<AppFeatureDataPoint> {
     private String preposition;
     private String particle;
 
-    private double ngramScore;
-    private double tfScore;
-    private double nnFreqScore;
-    private double vbFreqScore;
+    private double ngramScore = 0;
+    private double tfScore = 0;
+    private double nnFreqScore = 0;
+    private double vbFreqScore = 0;
 
     public String getPreposition() {
         return preposition;

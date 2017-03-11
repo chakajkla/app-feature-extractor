@@ -1,6 +1,13 @@
 package server;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import server.nlp.BigramExtractor;
 import server.nlp.FeatureParser;
@@ -8,6 +15,7 @@ import server.nlp.IndexBuilder;
 import server.nlp.IndexBuilder.TYPE;
 import server.nlp.NLPUtil;
 import server.objects.AndroidApp;
+import server.objects.AppFeatureDataPoint;
 import server.objects.AppFeatureDescriptor;
 import server.objects.Bigram;
 import server.crawler.PlayStoreAppPageCrawler;
@@ -19,8 +27,11 @@ public class FeatureProcessor {
 
         AppFeatureDescriptor featurelist = null;
 
+        boolean containOffline = containPackageIDOffline(packageID);
+        boolean containDB = containPackageID(packageID);
+
         // check if app is present in local database
-        if (!containPackageID(packageID)) {
+        if (!containDB && !containOffline) {
 
             System.out.println("Features for " + packageID + " not found...building new features");
 
@@ -50,6 +61,10 @@ public class FeatureProcessor {
                 return null;
             }
 
+        } else if (containOffline) {
+
+            featurelist = buildOfflineFeatureList(packageID);
+
         } else {
             System.out.println("Found features for " + packageID);
             featurelist = DataAccess.getFeatures(packageID);
@@ -57,8 +72,80 @@ public class FeatureProcessor {
 
         }
 
+        return featurelist;
+    }
+
+    private static AppFeatureDescriptor buildOfflineFeatureList(String packageID) {
+
+        AppFeatureDescriptor featurelist = new AppFeatureDescriptor();
+        featurelist.setName(packageID);
+
+        ArrayList<String[]> features = getOfflineFeatures(packageID);
+
+        for (String[] feature : features) {
+            AppFeatureDataPoint app_feature = new AppFeatureDataPoint();
+            app_feature.setName(packageID);
+            app_feature.setVerb(feature[0]);
+            app_feature.setNoun(feature[1]);
+            app_feature.setNgramScore(Double.parseDouble(feature[2]));
+
+            featurelist.addFunctionList(app_feature);
+        }
 
         return featurelist;
+
+    }
+
+    private static ArrayList<String[]> getOfflineFeatures(String packageID) {
+
+        ArrayList<String[]> featureLists = new ArrayList<>();
+
+
+        File dir = new File(apps_features_directory);
+        if (!dir.exists()) {
+            return featureLists;
+        }
+        for (File f : dir.listFiles()) {
+            if (f.getName().contains(packageID)) {
+
+                //read file
+                try (Stream<String> stream = Files.lines(Paths.get(f.getAbsolutePath()))) {
+
+                    stream.forEach(s -> {
+
+                        String[] sp = s.split("\\s");
+
+                        if (sp.length >= 2) {
+
+                            String[] featurePts = new String[3];
+                            Arrays.fill(featurePts, "0");
+
+
+                            featurePts[0] = sp[0];
+                            featurePts[1] = sp[1];
+
+                            if (sp.length == 3) {
+                                try {
+                                    Double.parseDouble(sp[2]);
+                                    featurePts[2] = sp[2];
+                                } catch (NumberFormatException e) {
+                                    //we ignore this since a feature maybe of 3 words
+                                }
+
+                            }
+                        }
+
+                    });
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+
+
+        return featureLists;
 
     }
 
@@ -92,6 +179,21 @@ public class FeatureProcessor {
 
     private static boolean containPackageID(String packageID) {
         return DataAccess.checkPackageID(packageID);
+    }
+
+    private static final String apps_features_directory = "/home/vmadmin/server/data/evaluation/apps/features";
+
+    private static boolean containPackageIDOffline(String packageID) {
+        File dir = new File(apps_features_directory);
+        if (!dir.exists()) {
+            return false;
+        }
+        for (File f : dir.listFiles()) {
+            if (f.getName().contains(packageID)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

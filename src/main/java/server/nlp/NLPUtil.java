@@ -3,15 +3,13 @@ package server.nlp;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import edu.mit.jwi.item.*;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
 import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
@@ -22,11 +20,6 @@ import server.objects.AppFeatureDataPoint;
 import server.objects.Bigram;
 import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.IDictionary;
-import edu.mit.jwi.item.IIndexWord;
-import edu.mit.jwi.item.ISynset;
-import edu.mit.jwi.item.IWord;
-import edu.mit.jwi.item.IWordID;
-import edu.mit.jwi.item.POS;
 import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
@@ -44,7 +37,10 @@ import edu.cmu.lti.ws4j.util.WS4JConfiguration;
 public class NLPUtil {
 
     private static final double semanticSimilarityThreshold = 0.65;
+    private static final double wordnetSimilarityThreshold = 0.05;
     private static ILexicalDatabase db = new NictWordNet();
+
+
 
     public static List<String> tokenizeString(String text) {
 
@@ -67,6 +63,18 @@ public class NLPUtil {
         }
 
         return sentenceList;
+    }
+
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}", Pattern.CASE_INSENSITIVE);
+
+    public static final Pattern VALID_ADDRESS_REGEX = Pattern.compile("(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", Pattern.CASE_INSENSITIVE);
+
+    public static boolean containsWeblinkOrEmail(String sentence) {
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(sentence);
+        Matcher matcher2 = VALID_ADDRESS_REGEX.matcher(sentence);
+        return matcher.find() || matcher2.find();
+
     }
 
     private static Properties props = new Properties();
@@ -93,7 +101,8 @@ public class NLPUtil {
                     .lemmatize(sentence));
 
             //check that the string is not single worded
-            if (!NLPUtil.checkDuplication(featureString)) {
+            if (!NLPUtil.checkDuplication(featureString)
+                    && !NLPUtil.containsWeblinkOrEmail(featureString)) {
                 cleanSentences.add(featureString);
             }
 
@@ -226,17 +235,47 @@ public class NLPUtil {
         return false;
     }
 
-    public static boolean checksynonymnDistance(String w1_verb, String w1_noun,
-                                                String w2_verb, String w2_noun) {
-
+    public static boolean checkFeatureEquality(String w1_verb, String w1_noun,
+                                               String w2_verb, String w2_noun){
         // check equality
         if (w1_verb.equals(w2_verb) && w1_noun.equals(w2_noun)) {
             return true;
         }
 
-        if ((checkSynonymn(w1_noun, w2_noun, POS.NOUN)
-                && checkSynonymn(w1_verb, w2_verb, POS.VERB)) &&
-                calculateSemanticSimilarity(w1_noun, w2_noun, w1_verb, w2_verb) >= semanticSimilarityThreshold) {
+        if (checksynonymnDistance(w1_verb,  w1_noun, w2_verb,  w2_noun)
+                && calculateSemanticSimilarity(w1_noun, w2_noun, w1_verb, w2_verb) >= semanticSimilarityThreshold //word level
+                && calculateSemanticSimilarity(w1_noun + " " + w2_noun, w1_verb + " " + w2_verb) >= semanticSimilarityThreshold //sentence level
+                && calculateSynsetJaccard(w1_noun, w2_noun, POS.NOUN) >= semanticSimilarityThreshold
+                && calculateSynsetJaccard(w1_verb, w2_verb, POS.VERB) >= semanticSimilarityThreshold
+                && checkWordNetSimilarity(w1_verb,  w1_noun, w2_verb,  w2_noun)
+                ) {
+
+            return true;
+        }
+
+
+        return false;
+    }
+
+    public static boolean checkWordNetSimilarity(String w1_verb, String w1_noun,
+                                                String w2_verb, String w2_noun) {
+        double distance1 = WordNet.calculateShortestPathDistance(w1_noun, w2_noun, POS.NOUN);
+        double distance2 =  WordNet.calculateShortestPathDistance(w1_verb, w2_verb, POS.VERB);
+
+        if(distance1 > 0 && distance2 > 0){
+            return ((distance1 + distance2) / 2) >= wordnetSimilarityThreshold;
+        }
+
+        return false;
+
+    }
+
+    public static boolean checksynonymnDistance(String w1_verb, String w1_noun,
+                                                String w2_verb, String w2_noun) {
+
+        if ((WordNet.checkSynonymn(w1_noun, w2_noun, POS.NOUN)
+                && WordNet.checkSynonymn(w1_verb, w2_verb, POS.VERB))
+                ) {
 
             return true;
         }
@@ -259,12 +298,16 @@ public class NLPUtil {
         return (nounSimilarity + verbSimilarity) / 2;
     }
 
-//    public static void main(String[] args){
-//        double score = calculateSemanticSimilarity("compose new email","create new email");
-//        //score = calculateSemanticSimilarity("add image","delete image");
-//        System.out.println(score);
-//    }
 
+
+    /***
+     * Unweighted version of Y. Li, D. McLean, Z. A. Bandar, J. D. O’Shea, and K. Crockett. Sentence
+     * similarity based on semantic nets and corpus statistics. I
+     *
+     * @param sen1
+     * @param sen2
+     * @return
+     */
     private static double calculateSemanticSimilarity(String sen1, String sen2) {
 
         String[] words1 = sen1.split("\\s");
@@ -297,7 +340,7 @@ public class NLPUtil {
                 double max_sim = Double.MIN_VALUE;
 
                 for (String words : w1Set) {
-                    max_sim = Math.max(max_sim, compute(words,w));
+                    max_sim = Math.max(max_sim, compute(words, w));
                 }
 
                 word1vector[i] = max_sim > threshold ? max_sim : 0;
@@ -315,7 +358,7 @@ public class NLPUtil {
                 double max_sim = Double.MIN_VALUE;
 
                 for (String words : w2Set) {
-                    max_sim = Math.max(max_sim, compute(words,w));
+                    max_sim = Math.max(max_sim, compute(words, w));
                 }
 
                 word2vector[i] = max_sim > threshold ? max_sim : 0;
@@ -324,7 +367,7 @@ public class NLPUtil {
         }
 
 
-        return getCosineSimilarity(word1vector,word2vector);
+        return getCosineSimilarity(word1vector, word2vector);
     }
 
     private static double getCosineSimilarity(double[] vectorA, double[] vectorB) {
@@ -357,69 +400,35 @@ public class NLPUtil {
         return s;
     }
 
+    public static Double calculateSynsetJaccard(String w1, String w2, POS pos) {
 
-    public static boolean checkSynonymn(String w1, String w2, POS pos) {
+        List<ISynsetID> l1 = WordNet.getRelatedSynsets(w1, pos);
+        List<ISynsetID> l2 = WordNet.getRelatedSynsets(w2, pos);
 
-        String path = "data/dict";
-        URL url;
-        try {
-            url = new URL("file", null, path);
+        return jaccardDistance(l1, l2);
 
-            // construct the dictionary object and open it
-            IDictionary dict = new Dictionary(url);
-
-            dict.open();
-
-            // check w1 against w2
-            IIndexWord idxWord = dict.getIndexWord(w1, pos);
-            IWordID wordID = idxWord.getWordIDs().get(0);
-            IWord word = dict.getWord(wordID);
-            ISynset synset = word.getSynset();
-
-            HashSet<String> synonymnList = new HashSet<>();
-            for (IWord w : synset.getWords())
-                synonymnList.add(w.getLemma());
-
-            if (synonymnList.contains(w2)) {
-
-                dict.close();
-                return true;
-            }
-
-            // check w2 against w1
-            idxWord = dict.getIndexWord(w2, pos);
-            wordID = idxWord.getWordIDs().get(0);
-            word = dict.getWord(wordID);
-            synset = word.getSynset();
-
-            synonymnList = new HashSet<>();
-            for (IWord w : synset.getWords())
-                synonymnList.add(w.getLemma());
-
-
-            if (synonymnList.contains(w1)) {
-
-                dict.close();
-                return true;
-            }
-
-
-            dict.close();
-
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NullPointerException e) {
-            return false;
-        }
-
-
-        return false;
     }
+
+    private static Double jaccardDistance(List l1, List l2) {
+
+        List<ISynsetID> intersection = new ArrayList<ISynsetID>(l1);
+        intersection.retainAll(l2);
+        Double intersSize = new Double(intersection.size());
+
+        HashSet<ISynsetID> unionSet = new HashSet<>();
+        unionSet.addAll(l1);
+        unionSet.addAll(l2);
+
+        Double unionSize = new Double(unionSet.size());
+
+        return intersSize / unionSize;
+
+    }
+
 
     public static boolean checkFeatureEquality(AppFeatureDataPoint f1,
                                                AppFeatureDataPoint f2) {
-        return NLPUtil.checksynonymnDistance(f1.getVerb(), f1.getNoun(),
+        return NLPUtil.checkFeatureEquality(f1.getVerb(), f1.getNoun(),
                 f2.getVerb(), f2.getNoun());
     }
 
