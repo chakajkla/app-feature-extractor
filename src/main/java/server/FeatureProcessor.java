@@ -1,9 +1,13 @@
 package server;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,8 +34,7 @@ public class FeatureProcessor {
         boolean containOffline = containPackageIDOffline(packageID);
         boolean containDB = containPackageID(packageID);
 
-        // check if app is present in local database
-        if (!containDB && !containOffline) {
+        /*if (!containDB && !containOffline) {
 
             System.out.println("Features for " + packageID + " not found...building new features");
 
@@ -47,9 +50,9 @@ public class FeatureProcessor {
 
                 featurelist = extractFeatures(name, description);
 
-                /***
+                *//***
                  * Update only features are extracted correctly
-                 */
+                 *//*
                 // update databse for packageID + description etc.
                 updateDatabase(app);
 
@@ -61,18 +64,36 @@ public class FeatureProcessor {
                 return null;
             }
 
-        } else if (containOffline) {
+        } else */if (containOffline) {
 
             featurelist = buildOfflineFeatureList(packageID);
 
-        } else {
+        } /*else {
             System.out.println("Found features for " + packageID);
             featurelist = DataAccess.getFeatures(packageID);
 
 
+        }*/
+
+        if(!containOffline){
+            appendPackageID(packageID);
         }
 
         return featurelist;
+    }
+
+    private static final String missingPackageFilePath = "/home/vmadmin/data_storage/packages";
+
+    private static void appendPackageID(String packageID){
+        Path FILE_PATH = Paths.get(missingPackageFilePath, "missing_packages.txt");
+        String newPackageID = packageID + "\n";
+
+        //Writing to the file temp.txt
+        try (BufferedWriter writer = Files.newBufferedWriter(FILE_PATH, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
+            writer.write(newPackageID);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static AppFeatureDescriptor buildOfflineFeatureList(String packageID) {
