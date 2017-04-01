@@ -10,7 +10,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import server.nlp.BigramExtractor;
@@ -51,8 +53,8 @@ public class FeatureProcessor {
                 featurelist = extractFeatures(name, description);
 
                 *//***
-                 * Update only features are extracted correctly
-                 *//*
+         * Update only features are extracted correctly
+         *//*
                 // update databse for packageID + description etc.
                 updateDatabase(app);
 
@@ -64,7 +66,8 @@ public class FeatureProcessor {
                 return null;
             }
 
-        } else */if (containOffline) {
+        } else */
+        if (containOffline) {
 
             featurelist = buildOfflineFeatureList(packageID);
 
@@ -75,7 +78,7 @@ public class FeatureProcessor {
 
         }*/
 
-        if(!containOffline){
+        if (!containOffline) {
             appendPackageID(packageID);
         }
 
@@ -84,15 +87,29 @@ public class FeatureProcessor {
 
     private static final String missingPackageFilePath = "/home/vmadmin/data_storage/packages";
 
-    private static void appendPackageID(String packageID){
-        Path FILE_PATH = Paths.get(missingPackageFilePath, "missing_packages.txt");
-        String newPackageID = packageID + "\n";
+    private static void appendPackageID(String packageID) {
 
-        //Writing to the file temp.txt
-        try (BufferedWriter writer = Files.newBufferedWriter(FILE_PATH, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
-            writer.write(newPackageID);
+        Path FILE_PATH = Paths.get(missingPackageFilePath, "missing_packages.txt");
+        List<String> packageIDs = new ArrayList<>();
+        try (Stream<String> stream = Files.lines(FILE_PATH)) {
+
+            packageIDs = stream.collect(Collectors.toList());
+
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        HashSet<String> uniqueIDs = new HashSet<>();
+        uniqueIDs.addAll(packageIDs);
+
+        if (!uniqueIDs.contains(packageID)) {
+            
+            String newPackageID = packageID + "\n";
+            //Writing to the file temp.txt
+            try (BufferedWriter writer = Files.newBufferedWriter(FILE_PATH, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
+                writer.write(newPackageID);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
