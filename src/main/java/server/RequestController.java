@@ -20,16 +20,18 @@ public class RequestController {
     @ResponseBody
     String handleFileUpload(
             @RequestParam("file") MultipartFile file) {
-        String name = "test11";
+        String name = file.getName();
         if (!file.isEmpty()) {
             try {
                 byte[] bytes = file.getBytes();
                 BufferedOutputStream stream =
-                        new BufferedOutputStream(new FileOutputStream(new File("/home/vmadmin/"+name + "-uploaded")));
+                        new BufferedOutputStream(new FileOutputStream(new File("/home/vmadmin/"+name + ".csv")));
                 stream.write(bytes);
                 stream.close();
+                System.out.println("You successfully uploaded " + name + " into " + name + "-uploaded !");
                 return "You successfully uploaded " + name + " into " + name + "-uploaded !";
             } catch (Exception e) {
+                System.out.println("You failed to upload " + name + " => " + e.getMessage());
                 return "You failed to upload " + name + " => " + e.getMessage();
             }
         } else {
