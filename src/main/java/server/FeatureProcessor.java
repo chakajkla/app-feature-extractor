@@ -102,7 +102,7 @@ public class FeatureProcessor {
         uniqueIDs.addAll(packageIDs);
 
         if (!uniqueIDs.contains(packageID)) {
-            
+
             String newPackageID = packageID + "\n";
             //Writing to the file temp.txt
             try (BufferedWriter writer = Files.newBufferedWriter(FILE_PATH, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
