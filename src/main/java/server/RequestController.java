@@ -20,7 +20,7 @@ public class RequestController {
     @ResponseBody
     String handleFileUpload(
             @RequestParam("file") MultipartFile file) {
-        String name = "test11";
+        String name = file.getOriginalFilename();
         if (!file.isEmpty()) {
             try {
                 byte[] bytes = file.getBytes();
