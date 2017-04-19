@@ -21,11 +21,19 @@ public class RequestController {
     String handleFileUpload(
             @RequestParam("file") MultipartFile file) {
         String name = file.getOriginalFilename();
+        String filePath = "/home/vmadmin/data_storage/"; //default for labelled data
+        if (name.contains("installed_apps")) {
+            filePath = "/home/vmadmin/data_storage/packages/";
+        }
+        else if (name.contains("manual_features")) {
+            filePath = "/home/vmadmin/data_storage/manual_features/";
+        }
+
         if (!file.isEmpty()) {
             try {
                 byte[] bytes = file.getBytes();
                 BufferedOutputStream stream =
-                        new BufferedOutputStream(new FileOutputStream(new File("/home/vmadmin/"+name)));
+                        new BufferedOutputStream(new FileOutputStream(new File(filePath + name)));
                 stream.write(bytes);
                 stream.close();
                 System.out.println("You successfully uploaded " + name + " into " + name + "-uploaded !");
