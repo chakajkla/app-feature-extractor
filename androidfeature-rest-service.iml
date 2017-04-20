@@ -62,5 +62,23 @@
     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-sandbox:4.10.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core:4.10.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-analyzers-common:4.10.3" level="project" />
+    <orderEntry type="module-library">
+      <library name="Maven: edu.cmu.lti:jawjaw:1.0.2">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jawjaw.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: edu.cmu.lti:ws4j:1.0.1">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/ws4j.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
