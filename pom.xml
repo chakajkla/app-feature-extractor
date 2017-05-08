@@ -75,6 +75,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <artifactId>tensorflow</artifactId>
+            <version>0.9.0–1.2</version>
+        </dependency>
+
+        <dependency>
             <groupId>edu.cmu.lti</groupId>
             <artifactId>jawjaw</artifactId>
             <version>1.0.2</version>
