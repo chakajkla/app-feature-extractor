@@ -59,10 +59,20 @@
     <orderEntry type="library" name="Maven: edu.mit:jwi:2.2.3" level="project" />
     <orderEntry type="library" name="Maven: org.xerial:sqlite-jdbc:3.8.11.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-queryparser:4.10.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core:4.10.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-queries:4.10.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-sandbox:4.10.3" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core:4.10.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-analyzers-common:4.10.3" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco.javacpp-presets:tensorflow:0.9.0–1.2" level="project" />
+    <orderEntry type="module-library">
+      <library name="Maven: org.tensorflow:tensorflow:1.1.0">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/libtensorflow-1.1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="module-library">
       <library name="Maven: edu.cmu.lti:jawjaw:1.0.2">
         <CLASSES>

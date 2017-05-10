@@ -1,4 +1,4 @@
-package server;
+package server.objects.response;
 
 /**
  * Created by USER on 20/1/2559.

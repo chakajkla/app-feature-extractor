@@ -1,4 +1,4 @@
-package server;
+package server.objects.response;
 
 import java.util.HashSet;
 import java.util.Set;

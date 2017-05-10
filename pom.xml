@@ -64,20 +64,18 @@
 		
 		<dependency>
            <groupId>org.apache.lucene</groupId>
-           <artifactId>lucene-core</artifactId>
-           <version>4.10.3</version>
-        </dependency>
-		
-		<dependency>
-           <groupId>org.apache.lucene</groupId>
            <artifactId>lucene-analyzers-common</artifactId>
            <version>4.10.3</version>
         </dependency>
 
         <dependency>
-            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <groupId>org.tensorflow</groupId>
             <artifactId>tensorflow</artifactId>
-            <version>0.9.0–1.2</version>
+            <version>1.1.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/libtensorflow-1.1.0.jar</systemPath>
+            <type>jar</type>
+            <optional>false</optional>
         </dependency>
 
         <dependency>
