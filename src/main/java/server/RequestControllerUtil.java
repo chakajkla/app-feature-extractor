@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by tomcat on 5/11/17.
+ * Created by Chakajkla on 5/11/17.
  */
 public class RequestControllerUtil {
 
@@ -23,16 +23,16 @@ public class RequestControllerUtil {
 
     }
 
-    public static void main(String[] args){
-
-        List<Float> list = new ArrayList<>();
-
-        list.add(1.45f);
-        list.add(2.34f);
-        list.add(3.45f);
-
-        System.out.println(Arrays.toString(convertToArray(list)));
-
-    }
+//    public static void main(String[] args){
+//
+//        List<Float> list = new ArrayList<>();
+//
+//        list.add(1.45f);
+//        list.add(2.34f);
+//        list.add(3.45f);
+//
+//        System.out.println(Arrays.toString(convertToArray(list)));
+//
+//    }
 
 }
