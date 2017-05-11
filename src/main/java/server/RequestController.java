@@ -31,6 +31,8 @@ public class RequestController {
             filePath = "/home/vmadmin/data_storage/packages/";
         } else if (name.contains("manual_features")) {
             filePath = "/home/vmadmin/data_storage/manual_features/";
+        } else if (name.contains("error")) {
+            filePath = "/home/vmadmin/data_storage/errors/";
         }
 
         if (!file.isEmpty()) {
