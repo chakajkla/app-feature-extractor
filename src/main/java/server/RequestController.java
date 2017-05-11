@@ -92,27 +92,27 @@ public class RequestController {
 
         System.out.println("Ranking features for..." + packageID + " " + app.getFeatureVector().toString());
 
-        Map<String, Float> rankedMap = TensorflowUtil.getFeaturesScore(packageID,  RequestControllerUtil.convertToArray(app.getFeatureVector()));
-
-        AppFeatureDescriptor featurelist = FeatureProcessor.getAppFeatures(packageID);
-
-        if (featurelist == null) {
-            return new ResponseEntity<>(new Response(packageID), HttpStatus.OK);
-        }
-
-        if (featurelist.getFunctionList().isEmpty()) {
-            return new ResponseEntity<>(new Response(packageID), HttpStatus.OK);
-        }
+//        Map<String, Float> rankedMap = TensorflowUtil.getFeaturesScore(packageID,  RequestControllerUtil.convertToArray(app.getFeatureVector()));
+//
+//        AppFeatureDescriptor featurelist = FeatureProcessor.getAppFeatures(packageID);
+//
+//        if (featurelist == null) {
+//            return new ResponseEntity<>(new Response(packageID), HttpStatus.OK);
+//        }
+//
+//        if (featurelist.getFunctionList().isEmpty()) {
+//            return new ResponseEntity<>(new Response(packageID), HttpStatus.OK);
+//        }
 
         Response res = new Response(packageID);
 
-        Set<Feature> ft = new HashSet<Feature>();
-        for (int i = 0; i < featurelist.getFunctionList().size(); i++) {
-            AppFeatureDataPoint dp = featurelist.getFunctionList().get(i);
-            Feature f = new Feature(dp.getFeature(), rankedMap.get(dp.getFeature()));
-            ft.add(f);
-        }
-        res.setFeatures(ft);
+//        Set<Feature> ft = new HashSet<>();
+//        for (int i = 0; i < featurelist.getFunctionList().size(); i++) {
+//            AppFeatureDataPoint dp = featurelist.getFunctionList().get(i);
+//            Feature f = new Feature(dp.getFeature(), rankedMap.get(dp.getFeature()));
+//            ft.add(f);
+//        }
+//        res.setFeatures(ft);
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
