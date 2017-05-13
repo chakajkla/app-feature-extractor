@@ -65,6 +65,7 @@ public class DataQualityProcessor
             List<CSVRecord> csvRecords = csvFileParser.getRecords();
             
             // Check all default sensors are recorded
+            // TODO: implement more checks like sensor value checking etc.
             for (CSVRecord record : csvRecords) {
                 if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_APP)) {
                     appSensorRecorded = true;
@@ -81,7 +82,7 @@ public class DataQualityProcessor
         } catch(Exception e) {
             System.out.println("Error in CsvFileReader !!!");
             e.printStackTrace();
-            //DataAccess.updateLabelledFile(fileName, 3, "Error while reading file");
+            DataAccess.updateLabelledFile(fileName, 3, "Error while reading file");
         } finally {
             try {
                 if (fileReader != null) {
@@ -113,13 +114,13 @@ public class DataQualityProcessor
                 builder.append("awarenessSensor, ");
             
             String errorString = StringUtils.removeEnd(builder.toString(), ",") + "not recorded";
-            //DataAccess.updateLabelledFile(fileName, 3, errorString);
+            DataAccess.updateLabelledFile(fileName, 3, errorString);
             
             return false;
         }
         
         if (allDefaultSensorsRecorded) {
-            //DataAccess.updateLabelledFile(fileName, 2, "Check passed successfully");
+            DataAccess.updateLabelledFile(fileName, 2, "Check passed successfully");
             return true;
         }
         

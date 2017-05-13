@@ -172,14 +172,23 @@ public class RequestController {
     }
     
     private String extractFileString(MultipartFile file) {
-        InputStream fileInputStream = file.getInputStream();
-        StringWriter writer = new StringWriter();
-        IOUtils.copy(fileInputStream, writer, "UTF-8");
-        String fileString = writer.toString();
-        writer.close();
-        fileInputStream.close();
-        
-        return fileString;
+        try
+        {
+            InputStream fileInputStream = file.getInputStream();
+            StringWriter writer = new StringWriter();
+            IOUtils.copy(fileInputStream, writer, "UTF-8");
+            String fileString = writer.toString();
+            writer.close();
+            fileInputStream.close();
+            
+            return fileString;
+        }
+        catch (IOException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+           return null;
     }
 
 }
