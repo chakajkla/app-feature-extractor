@@ -118,7 +118,7 @@ public class DataAccess {
             stmt = c.createStatement();
 
             String sql = "UPDATE labelled_files "
-                    + "SET file_state = " + fileState + ", state_desc = \"" + description + "\", updated = time('now') "
+                    + "SET file_state = " + fileState + ", state_desc = \"" + description + "\", updated = CURRENT_TIMESTAMP "
                     + "WHERE file_name = \"" + fileName + "\";";
             
             stmt.executeUpdate(sql);
