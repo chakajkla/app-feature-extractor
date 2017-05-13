@@ -72,10 +72,8 @@
             <groupId>org.tensorflow</groupId>
             <artifactId>tensorflow</artifactId>
             <version>1.1.0</version>
-            <scope>system</scope>
             <systemPath>${basedir}/lib/libtensorflow-1.1.0.jar</systemPath>
-            <type>jar</type>
-            <optional>false</optional>
+            <scope>system</scope>
         </dependency>
 
         <dependency>
@@ -97,7 +95,22 @@
             <type>jar</type>
             <optional>false</optional>
         </dependency>
-		
+
+        <dependency>
+        	<groupId>org.apache.commons</groupId>
+        	<artifactId>commons-lang3</artifactId>
+        	<version>3.5</version>
+        </dependency>
+        <dependency>
+        	<groupId>commons-io</groupId>
+        	<artifactId>commons-io</artifactId>
+        	<version>2.5</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.apache.commons</groupId>
+        	<artifactId>commons-csv</artifactId>
+        	<version>1.4</version>
+        </dependency>
     </dependencies>
 
     <properties>

@@ -1,15 +1,29 @@
 package server;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.*;
 
 import org.springframework.web.multipart.MultipartFile;
+
+import server.DataQualityProcessor;
+import server.database.DataAccess;
 import server.model.TensorflowUtil;
 import server.objects.AppFeatureDescriptor;
 import server.objects.AppFeatureDataPoint;
@@ -43,6 +57,17 @@ public class RequestController {
                 stream.write(bytes);
                 stream.close();
                 System.out.println("You successfully uploaded " + name + " into " + name + "-uploaded !");
+                
+                // Inserting new user into db
+                if (name.contains("installed_apps")) {
+                    insertNewUserIntoDb(file, name);
+                }
+                // Data quality check for labeled data
+                else if (name.contains("labeled_data")) {
+                    DataAccess.insertNewLabelledFile(name, DataQualityProcessor.getDeviceIdFromName(name, 13), "not yet checked");
+                    new DataQualityProcessor(filePath, name).checkLabeledDataFile();
+                }
+                
                 return "You successfully uploaded " + name + " into " + name + "-uploaded !";
             } catch (Exception e) {
                 e.printStackTrace();
@@ -133,5 +158,28 @@ public class RequestController {
 //
 //        return new ResponseEntity<App>(car, HttpStatus.OK);
 //    }
+    
+    private void insertNewUserIntoDb(MultipartFile file, String fileName) {
+        // Extract number of apps
+        String installedAppsString = extractFileString(file);
+        String[] installedApps = StringUtils.split(installedAppsString, ';');
+        int numberOfApps = installedApps.length;
+        
+        // Extract deviceId
+        String deviceId = DataQualityProcessor.getDeviceIdFromName(fileName, 16);
+        
+        DataAccess.insertNewUser(deviceId, numberOfApps);
+    }
+    
+    private String extractFileString(MultipartFile file) {
+        InputStream fileInputStream = file.getInputStream();
+        StringWriter writer = new StringWriter();
+        IOUtils.copy(fileInputStream, writer, "UTF-8");
+        String fileString = writer.toString();
+        writer.close();
+        fileInputStream.close();
+        
+        return fileString;
+    }
 
 }

@@ -47,6 +47,92 @@ public class DataAccess {
         return true;
 
     }
+    
+    public static boolean insertNewUser(String userId, int numberOfApps) {
+        Connection c = null;
+        Statement stmt = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:"
+                    + PathStorage.databasePath);
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully");
+
+            stmt = c.createStatement();
+
+            String sql = "INSERT INTO user_data (device_id, number_apps) "
+                    + "VALUES (\"" + userId + "\", " + numberOfApps
+                    + ");";
+            
+            stmt.executeUpdate(sql);
+            c.commit();
+            c.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return false;
+        }
+        System.out.println("Insert Operation done successfully");
+
+        return true;
+    }
+    
+    public static boolean insertNewLabelledFile(String fileName, String userId, String description) {
+        Connection c = null;
+        Statement stmt = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:"
+                    + PathStorage.databasePath);
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully");
+
+            stmt = c.createStatement();
+
+            String sql = "INSERT INTO labelled_files (file_name, file_State, user_id, state_desc) "
+                    + "VALUES (\"" + fileName + "\", 0, \"" + userId + "\", \"" + description + "\");";
+            
+            stmt.executeUpdate(sql);
+            c.commit();
+            c.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return false;
+        }
+        System.out.println("Insert Operation done successfully");
+
+        return true;
+    }
+    
+    public static boolean updateLabelledFile(String fileName, int fileState, String description) {
+        Connection c = null;
+        Statement stmt = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:"
+                    + PathStorage.databasePath);
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully");
+
+            stmt = c.createStatement();
+
+            String sql = "UPDATE labelled_files "
+                    + "SET file_state = " + fileState + ", state_desc = \"" + description + "\", updated = time('now') "
+                    + "WHERE file_name = \"" + fileName + "\";";
+            
+            stmt.executeUpdate(sql);
+            c.commit();
+            c.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return false;
+        }
+        System.out.println("Update Operation done successfully");
+
+        return true;
+    }
 
     public static AndroidApp getAppFromDatabase(String packageID) {
         Connection c = null;
