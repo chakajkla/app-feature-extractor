@@ -36,6 +36,14 @@ public class DataQualityProcessor
     private String filePath;
     private String fileName;
     
+    private boolean appSensorRecorded = false;
+    private boolean interactionSensorRecorded = false;
+    private boolean connectivitySensorRecorded = false;
+    private boolean deviceProtectionSensorRecorded = false;
+    private boolean awarenessSensorRecorded = false;
+    
+    private boolean allDefaultSensorsRecorded = false;
+    
     public DataQualityProcessor(String filePath, String fileName) {
         this.filePath = filePath;
         this.fileName = fileName;
@@ -44,13 +52,6 @@ public class DataQualityProcessor
     public boolean checkLabeledDataFile() {
         FileReader fileReader = null;
         CSVParser csvFileParser = null;
-        boolean appSensorRecorded = false;
-        boolean interactionSensorRecorded = false;
-        boolean connectivitySensorRecorded = false;
-        boolean deviceProtectionSensorRecorded = false;
-        boolean awarenessSensorRecorded = false;
-        
-        boolean allDefaultSensorsRecorded = false;
         
         
         try {
@@ -58,7 +59,6 @@ public class DataQualityProcessor
             //DataAccess.updateLabelledFile(fileName, 1, "Currently checked");
             
             fileReader = new FileReader(filePath + fileName);
-            
             csvFileParser = CSVFormat.DEFAULT.withDelimiter(';').withHeader(FILE_HEADER_MAPPING).withRecordSeparator('\n').parse(fileReader);
             
             //Get a list of CSV file records
@@ -66,19 +66,7 @@ public class DataQualityProcessor
             
             // Check all default sensors are recorded
             // TODO: implement more checks like sensor value checking etc.
-            for (CSVRecord record : csvRecords) {
-                if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_APP)) {
-                    appSensorRecorded = true;
-                } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_INTERACTION)) {
-                    interactionSensorRecorded = true;
-                } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_CONNECTIVITY)) {
-                    connectivitySensorRecorded = true;
-                } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_DEVICE_PROTECTION)) {
-                    deviceProtectionSensorRecorded = true;
-                } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_AWARENESS)) {
-                    awarenessSensorRecorded = true;
-                }
-            }
+            check4AllDefaultSensorsRecorded(csvRecords);
         } catch(Exception e) {
             System.out.println("Error in CsvFileReader !!!");
             e.printStackTrace();
@@ -97,6 +85,10 @@ public class DataQualityProcessor
             }
         }
         
+        return checkResults();
+    }
+    
+    private boolean checkResults() {
         if (appSensorRecorded && interactionSensorRecorded && connectivitySensorRecorded && deviceProtectionSensorRecorded && awarenessSensorRecorded) {
             allDefaultSensorsRecorded = true;
         } else {
@@ -125,6 +117,22 @@ public class DataQualityProcessor
         }
         
         return false;
+    }
+    
+    private void check4AllDefaultSensorsRecorded(List<CSVRecord> csvRecords) {
+        for (CSVRecord record : csvRecords) {
+            if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_APP)) {
+                appSensorRecorded = true;
+            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_INTERACTION)) {
+                interactionSensorRecorded = true;
+            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_CONNECTIVITY)) {
+                connectivitySensorRecorded = true;
+            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_DEVICE_PROTECTION)) {
+                deviceProtectionSensorRecorded = true;
+            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_AWARENESS)) {
+                awarenessSensorRecorded = true;
+            }
+        } 
     }
     
     public static String getDeviceIdFromName(String fileName, int startIndex) {
