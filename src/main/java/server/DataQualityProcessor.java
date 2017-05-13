@@ -55,8 +55,7 @@ public class DataQualityProcessor
         
         
         try {
-            String userId = getDeviceIdFromName(fileName, 13);
-            //DataAccess.updateLabelledFile(fileName, 1, "Currently checked");
+            DataAccess.updateLabelledFile(fileName, 1, "Currently checked");
             
             fileReader = new FileReader(filePath + fileName);
             csvFileParser = CSVFormat.DEFAULT.withDelimiter(';').withHeader(FILE_HEADER_MAPPING).withRecordSeparator('\n').parse(fileReader);
@@ -134,6 +133,23 @@ public class DataQualityProcessor
             }
         } 
     }
+    
+//    private boolean check4SensorValuesCorrect(List<CSVRecord> csvRecords) {
+//        for (CSVRecord record : csvRecords) {
+//            if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_APP)) {
+//                
+//            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_INTERACTION)) {
+//                
+//            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_CONNECTIVITY)) {
+//                
+//            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_DEVICE_PROTECTION)) {
+//                
+//            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_AWARENESS)) {
+//                
+//            }
+//        }
+//        return true;
+//    }
     
     public static String getDeviceIdFromName(String fileName, int startIndex) {
         return StringUtils.substring(fileName, startIndex, startIndex+17);
