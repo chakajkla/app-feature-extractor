@@ -44,6 +44,8 @@ public class DataQualityProcessor
     
     private boolean allDefaultSensorsRecorded = false;
     
+    private boolean awarenessSensorValuesCorrect = false;
+    
     public DataQualityProcessor(String filePath, String fileName) {
         this.filePath = filePath;
         this.fileName = fileName;
@@ -66,6 +68,9 @@ public class DataQualityProcessor
             // Check all default sensors are recorded
             // TODO: implement more checks like sensor value checking etc.
             check4AllDefaultSensorsRecorded(csvRecords);
+            if (awarenessSensorRecorded) {
+                awarenessSensorValuesCorrect = checkAwarenessSensorValues(csvRecords);
+            }
         } catch(Exception e) {
             System.out.println("Error in CsvFileReader !!!");
             e.printStackTrace();
@@ -85,6 +90,34 @@ public class DataQualityProcessor
         }
         
         return checkResults();
+    }
+    
+    private boolean checkAwarenessSensorValues(List<CSVRecord> csvRecords) {
+        int contextEventId = 0;
+        try {
+            for (CSVRecord record : csvRecords) {
+                if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_AWARENESS)
+                        && StringUtils.equals(record.get("property_key"), "type")
+                        && StringUtils.equals(record.get("property_value"), "places")) {
+                    contextEventId = Integer.parseInt(record.get("context_event_id"));
+                    continue;
+                }
+                if (Integer.parseInt(record.get("context_event_id")) == contextEventId
+                        && StringUtils.equals(record.get("property_key"), "typeString")) {
+                    String propertyValue = record.get("property_value");
+                    String[] properties = propertyValue.split(",");
+                    for (String property : properties) {
+                        String[] intValues = property.split("#");
+                        for (String intValue : intValues) {
+                            Integer.parseInt(intValue);
+                        }
+                    }
+                }
+            }
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
     }
     
     private boolean checkResults() {
@@ -107,6 +140,11 @@ public class DataQualityProcessor
             String errorString = StringUtils.removeEnd(builder.toString(), ",") + "not recorded";
             DataAccess.updateLabelledFile(fileName, 3, errorString);
             
+            return false;
+        }
+        
+        if (!awarenessSensorValuesCorrect) {
+            DataAccess.updateLabelledFile(fileName, 3, "AwarenessSensor: places typeString value is not an integer");
             return false;
         }
         
@@ -133,23 +171,6 @@ public class DataQualityProcessor
             }
         } 
     }
-    
-//    private boolean check4SensorValuesCorrect(List<CSVRecord> csvRecords) {
-//        for (CSVRecord record : csvRecords) {
-//            if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_APP)) {
-//                
-//            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_INTERACTION)) {
-//                
-//            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_CONNECTIVITY)) {
-//                
-//            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_DEVICE_PROTECTION)) {
-//                
-//            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_AWARENESS)) {
-//                
-//            }
-//        }
-//        return true;
-//    }
     
     public static String getDeviceIdFromName(String fileName, int startIndex) {
         return StringUtils.substring(fileName, startIndex, startIndex+17);
