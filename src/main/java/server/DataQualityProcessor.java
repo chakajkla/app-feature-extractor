@@ -41,10 +41,18 @@ public class DataQualityProcessor
     private boolean connectivitySensorRecorded = false;
     private boolean deviceProtectionSensorRecorded = false;
     private boolean awarenessSensorRecorded = false;
+    private boolean settingsSensorRecorded = false;
+    private boolean labellingSensorRecorded = false;
+    private boolean locationSensorRecorded = false;
     
     private boolean allDefaultSensorsRecorded = false;
     
     private boolean awarenessSensorValuesCorrect = false;
+    private boolean connectivitySensorValuesCorrect = false;
+    private boolean deviceProtectionSensorValuesCorrect = false;
+    private boolean settingsSensorValuesCorrect = false;
+    private boolean labellingSensorValuesCorrect = false;
+    private boolean locationSensorValuesCorrect = false;
     
     public DataQualityProcessor(String filePath, String fileName) {
         this.filePath = filePath;
@@ -66,10 +74,24 @@ public class DataQualityProcessor
             List<CSVRecord> csvRecords = csvFileParser.getRecords();
             
             // Check all default sensors are recorded
-            // TODO: implement more checks like sensor value checking etc.
-            check4AllDefaultSensorsRecorded(csvRecords);
+            check4SensorsRecorded(csvRecords);
             if (awarenessSensorRecorded) {
                 awarenessSensorValuesCorrect = checkAwarenessSensorValues(csvRecords);
+            }
+            if (connectivitySensorRecorded) {
+                connectivitySensorValuesCorrect = checkConnectivitySensorValues(csvRecords);
+            }
+            if (deviceProtectionSensorRecorded) {
+                deviceProtectionSensorValuesCorrect = checkDeviceProtectionSensorValues(csvRecords);
+            }
+            if (settingsSensorRecorded) {
+                settingsSensorValuesCorrect = checkSettingsSensorValues(csvRecords);
+            }
+            if (labellingSensorRecorded) {
+                labellingSensorValuesCorrect = checkLabellingSensorValues(csvRecords);
+            }
+            if (locationSensorRecorded) {
+                locationSensorValuesCorrect = checkLocationSensorValues(csvRecords);
             }
         } catch(Exception e) {
             System.out.println("Error in CsvFileReader !!!");
@@ -120,6 +142,110 @@ public class DataQualityProcessor
         return true;
     }
     
+    private boolean checkConnectivitySensorValues(List<CSVRecord> csvRecords) {
+        boolean connectivitySensorValuesCorrect = false;
+        for (CSVRecord record : csvRecords) {
+            if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_CONNECTIVITY)) {
+                switch(record.get("property_key")) {
+                    case "airplanemode":
+                    case "wificonnected":
+                    case "mobileconnected":
+                    case "wifienabled":
+                    case "bluetoothconnected":
+                    case "hiddenssid":
+                        String value = StringUtils.trimToEmpty(record.get("property_value"));
+                        if (StringUtils.equalsIgnoreCase(value, "true") || StringUtils.equalsIgnoreCase(value, "false")) {
+                            connectivitySensorValuesCorrect = true;
+                        } else {
+                            connectivitySensorValuesCorrect = false;
+                        }
+                        break;
+                }
+            }
+        }
+        return connectivitySensorValuesCorrect;
+    }
+    
+    private boolean checkDeviceProtectionSensorValues(List<CSVRecord> csvRecords) {
+        boolean deviceProtectionSensorValuesCorrect = false;
+        for (CSVRecord record : csvRecords) {
+            if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_DEVICE_PROTECTION)) {
+                switch(record.get("property_key")) {
+                    case "ispasswordprotected":
+                    case "istrustedantivirusinstalled":
+                    case "accessibilityenabled":
+                    case "musesdatabaseexists":
+                    case "isrooted":
+                        String value = StringUtils.trimToEmpty(record.get("property_value"));
+                        if (StringUtils.equalsIgnoreCase(value, "true") || StringUtils.equalsIgnoreCase(value, "false")) {
+                            deviceProtectionSensorValuesCorrect = true;
+                        } else {
+                            deviceProtectionSensorValuesCorrect = false;
+                        }
+                        break;
+                }
+            }
+        }
+        return deviceProtectionSensorValuesCorrect;
+    }
+    
+    private boolean checkSettingsSensorValues(List<CSVRecord> csvRecords) {
+        try {
+            for (CSVRecord record : csvRecords) {
+                if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_SETTINGS)
+                        && StringUtils.equals(record.get("property_key"), "osversion")) {
+                    Double.parseDouble(record.get("property_value"));
+                }
+            }
+        } catch (NumberFormatException|NullPointerException e) {
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean checkLabellingSensorValues(List<CSVRecord> csvRecords) {
+        boolean labellingSensorValuesCorrect = false;
+        for (CSVRecord record : csvRecords) {
+            if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_LABELLING)) {
+                switch(record.get("property_key")) {
+                    case "referencedId":
+                    case "usage":
+                    case "appName":
+                        String value = StringUtils.trimToEmpty(record.get("property_value"));
+                        if (!StringUtils.isBlank(value)) {
+                            labellingSensorValuesCorrect = true;
+                        } else {
+                            labellingSensorValuesCorrect = false;
+                        }
+                        break;
+                }
+            }
+        }
+        return labellingSensorValuesCorrect;
+    }
+    
+    private boolean checkLocationSensorValues(List<CSVRecord> csvRecords) {
+        try {
+            for (CSVRecord record : csvRecords) {
+                if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_LABELLING)) {
+                    switch(record.get("property_key")) {
+                        case "longitude":
+                        case "latitude":
+                            Double.parseDouble(record.get("property_value"));
+                            break;
+                        case "hashid":
+                            Integer.parseInt(record.get("property_value"));
+                            
+                            break;
+                    }
+                }
+            }
+        } catch (NumberFormatException|NullPointerException e) {
+            return false;
+        }
+        return true;
+    }
+    
     private boolean checkResults() {
         if (appSensorRecorded && interactionSensorRecorded && connectivitySensorRecorded && deviceProtectionSensorRecorded && awarenessSensorRecorded) {
             allDefaultSensorsRecorded = true;
@@ -144,7 +270,32 @@ public class DataQualityProcessor
         }
         
         if (!awarenessSensorValuesCorrect) {
-            DataAccess.updateLabelledFile(fileName, 3, "AwarenessSensor: places typeString value is not an integer");
+            DataAccess.updateLabelledFile(fileName, 3, "AwarenessSensor: values are invalid");
+            return false;
+        }
+        
+        if (!connectivitySensorValuesCorrect) {
+            DataAccess.updateLabelledFile(fileName, 3, "ConnectivitySensor: values are invalid");
+            return false;
+        }
+        
+        if (!deviceProtectionSensorValuesCorrect) {
+            DataAccess.updateLabelledFile(fileName, 3, "DeviceProtectionSensor: values are invalid");
+            return false;
+        }
+        
+        if (settingsSensorRecorded && !settingsSensorValuesCorrect) {
+            DataAccess.updateLabelledFile(fileName, 3, "SettingsSensor: values are invalid");
+            return false;
+        }
+        
+        if (labellingSensorRecorded && !labellingSensorValuesCorrect) {
+            DataAccess.updateLabelledFile(fileName, 3, "LabellingSensor: values are invalid");
+            return false;
+        }
+        
+        if (locationSensorRecorded && !locationSensorValuesCorrect) {
+            DataAccess.updateLabelledFile(fileName, 3, "LocationSensor: values are invalid");
             return false;
         }
         
@@ -156,7 +307,7 @@ public class DataQualityProcessor
         return false;
     }
     
-    private void check4AllDefaultSensorsRecorded(List<CSVRecord> csvRecords) {
+    private void check4SensorsRecorded(List<CSVRecord> csvRecords) {
         for (CSVRecord record : csvRecords) {
             if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_APP)) {
                 appSensorRecorded = true;
@@ -168,6 +319,12 @@ public class DataQualityProcessor
                 deviceProtectionSensorRecorded = true;
             } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_AWARENESS)) {
                 awarenessSensorRecorded = true;
+            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_SETTINGS)) {
+                settingsSensorRecorded = true;
+            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_LABELLING)) {
+                labellingSensorRecorded = true;
+            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_LOCATION)) {
+                locationSensorRecorded = true;
             }
         } 
     }
