@@ -45,8 +45,6 @@ public class DataQualityProcessor
     private boolean labellingSensorRecorded = false;
     private boolean locationSensorRecorded = false;
     
-    private boolean allDefaultSensorsRecorded = false;
-    
     private boolean awarenessSensorValuesCorrect = false;
     private boolean connectivitySensorValuesCorrect = false;
     private boolean deviceProtectionSensorValuesCorrect = false;
@@ -247,9 +245,8 @@ public class DataQualityProcessor
     }
     
     private boolean checkResults() {
-        if (appSensorRecorded && interactionSensorRecorded && connectivitySensorRecorded && deviceProtectionSensorRecorded && awarenessSensorRecorded) {
-            allDefaultSensorsRecorded = true;
-        } else {
+        String errorString = "";
+        if (!appSensorRecorded || !interactionSensorRecorded || !connectivitySensorRecorded || !deviceProtectionSensorRecorded || !awarenessSensorRecorded) {
             StringBuilder builder = new StringBuilder();
             
             if (!appSensorRecorded)
@@ -263,48 +260,40 @@ public class DataQualityProcessor
             if (!awarenessSensorRecorded)
                 builder.append("awarenessSensor, ");
             
-            String errorString = StringUtils.removeEnd(builder.toString(), ",") + "not recorded";
-            DataAccess.updateLabelledFile(fileName, 3, errorString);
-            
-            return false;
+            errorString += StringUtils.removeEnd(builder.toString(), ",") + "not recorded. ";
         }
         
         if (!awarenessSensorValuesCorrect) {
-            DataAccess.updateLabelledFile(fileName, 3, "AwarenessSensor: values are invalid");
-            return false;
+            errorString += "AwarenessSensor: values are invalid. ";
         }
         
         if (!connectivitySensorValuesCorrect) {
-            DataAccess.updateLabelledFile(fileName, 3, "ConnectivitySensor: values are invalid");
-            return false;
+            errorString += "ConnectivitySensor: values are invalid. ";
         }
         
         if (!deviceProtectionSensorValuesCorrect) {
-            DataAccess.updateLabelledFile(fileName, 3, "DeviceProtectionSensor: values are invalid");
-            return false;
+            errorString += "DeviceProtectionSensor: values are invalid. ";
         }
         
         if (settingsSensorRecorded && !settingsSensorValuesCorrect) {
-            DataAccess.updateLabelledFile(fileName, 3, "SettingsSensor: values are invalid");
-            return false;
+            errorString += "SettingsSensor: values are invalid. ";
         }
         
         if (labellingSensorRecorded && !labellingSensorValuesCorrect) {
-            DataAccess.updateLabelledFile(fileName, 3, "LabellingSensor: values are invalid");
-            return false;
+            errorString += "LabellingSensor: values are invalid. ";
         }
         
         if (locationSensorRecorded && !locationSensorValuesCorrect) {
-            DataAccess.updateLabelledFile(fileName, 3, "LocationSensor: values are invalid");
-            return false;
+            errorString += "LocationSensor: values are invalid. ";
         }
         
-        if (allDefaultSensorsRecorded) {
+        if (StringUtils.isEmpty(errorString)) {
+            DataAccess.updateLabelledFile(fileName, 3, errorString);
+            return false;
+        } else {
             DataAccess.updateLabelledFile(fileName, 2, "Check passed successfully");
             return true;
         }
-        
-        return false;
     }
     
     private void check4SensorsRecorded(List<CSVRecord> csvRecords) {
