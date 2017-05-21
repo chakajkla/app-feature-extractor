@@ -3,6 +3,7 @@ package server.database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import server.nlp.NLPUtil;
@@ -69,7 +70,15 @@ public class DataAccess {
             c.close();
         } catch (Exception e) {
             e.printStackTrace();
-
+            try
+            {
+                c.rollback();
+                c.close();
+            }
+            catch (SQLException e1)
+            {
+                e1.printStackTrace();
+            }
             return false;
         }
         System.out.println("Insert Operation done successfully");
@@ -97,6 +106,15 @@ public class DataAccess {
             c.close();
         } catch (Exception e) {
             e.printStackTrace();
+            try
+            {
+                c.rollback();
+                c.close();
+            }
+            catch (SQLException e1)
+            {
+                e1.printStackTrace();
+            }
 
             return false;
         }
@@ -126,6 +144,15 @@ public class DataAccess {
             c.close();
         } catch (Exception e) {
             e.printStackTrace();
+            try
+            {
+                c.rollback();
+                c.close();
+            }
+            catch (SQLException e1)
+            {
+                e1.printStackTrace();
+            }
 
             return false;
         }
