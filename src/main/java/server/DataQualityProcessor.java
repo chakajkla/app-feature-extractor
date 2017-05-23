@@ -20,7 +20,7 @@ import server.database.DataAccess;
  */
 public class DataQualityProcessor
 {
-    private static final String [] FILE_HEADER_MAPPING = {"session_id","context_event_id","context_event_type","timestamp","property_key","property_value"};
+    public static final String [] FILE_HEADER_MAPPING = {"session_id","context_event_id","context_event_type","timestamp","timezone","property_key","property_value"};
     private static final String SENSOR_TYPE_APP = "CONTEXT_SENSOR_APP";
     private static final String SENSOR_TYPE_CONNECTIVITY = "CONTEXT_SENSOR_CONNECTIVITY";
     private static final String SENSOR_TYPE_SETTINGS = "CONTEXT_SENSOR_SETTINGS";
@@ -30,8 +30,8 @@ public class DataQualityProcessor
     private static final String SENSOR_TYPE_GENERIC = "CONTEXT_SENSOR_GENERIC";
     private static final String SENSOR_TYPE_AWARENESS = "CONTEXT_SENSOR_AWARENESS";
     private static final String SENSOR_TYPE_NOTIFICATION = "CONTEXT_SENSOR_NOTIFICATION";
-    private static final String SENSOR_TYPE_INTERACTION = "CONTEXT_SENSOR_INTERACTION";
-    private static final String SENSOR_TYPE_LABELLING = "CONTEXT_SENSOR_LABELLING";
+    public static final String SENSOR_TYPE_INTERACTION = "CONTEXT_SENSOR_INTERACTION";
+    public static final String SENSOR_TYPE_LABELLING = "CONTEXT_SENSOR_LABELLING";
     
     private String filePath;
     private String fileName;
@@ -116,6 +116,9 @@ public class DataQualityProcessor
         int contextEventId = 0;
         try {
             for (CSVRecord record : csvRecords) {
+                if (record.size() < 7) {
+                    continue;
+                }
                 if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_AWARENESS)
                         && StringUtils.equals(record.get("property_key"), "type")
                         && StringUtils.equals(record.get("property_value"), "places")) {
@@ -143,6 +146,9 @@ public class DataQualityProcessor
     private boolean checkConnectivitySensorValues(List<CSVRecord> csvRecords) {
         boolean connectivitySensorValuesCorrect = false;
         for (CSVRecord record : csvRecords) {
+            if (record.size() < 7) {
+                continue;
+            }
             if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_CONNECTIVITY)) {
                 switch(record.get("property_key")) {
                     case "airplanemode":
@@ -167,6 +173,9 @@ public class DataQualityProcessor
     private boolean checkDeviceProtectionSensorValues(List<CSVRecord> csvRecords) {
         boolean deviceProtectionSensorValuesCorrect = false;
         for (CSVRecord record : csvRecords) {
+            if (record.size() < 7) {
+                continue;
+            }
             if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_DEVICE_PROTECTION)) {
                 switch(record.get("property_key")) {
                     case "ispasswordprotected":
@@ -190,6 +199,9 @@ public class DataQualityProcessor
     private boolean checkSettingsSensorValues(List<CSVRecord> csvRecords) {
         try {
             for (CSVRecord record : csvRecords) {
+                if (record.size() < 7) {
+                    continue;
+                }
                 if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_SETTINGS)
                         && StringUtils.equals(record.get("property_key"), "osversion")) {
                     Double.parseDouble(record.get("property_value"));
@@ -204,6 +216,9 @@ public class DataQualityProcessor
     private boolean checkLabellingSensorValues(List<CSVRecord> csvRecords) {
         boolean labellingSensorValuesCorrect = false;
         for (CSVRecord record : csvRecords) {
+            if (record.size() < 7) {
+                continue;
+            }
             if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_LABELLING)) {
                 switch(record.get("property_key")) {
                     case "referencedId":
@@ -225,6 +240,9 @@ public class DataQualityProcessor
     private boolean checkLocationSensorValues(List<CSVRecord> csvRecords) {
         try {
             for (CSVRecord record : csvRecords) {
+                if (record.size() < 7) {
+                    continue;
+                }
                 if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_LABELLING)) {
                     switch(record.get("property_key")) {
                         case "longitude":
@@ -298,6 +316,9 @@ public class DataQualityProcessor
     
     private void check4SensorsRecorded(List<CSVRecord> csvRecords) {
         for (CSVRecord record : csvRecords) {
+            if (record.size() < 7) {
+                continue;
+            }
             if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_APP)) {
                 appSensorRecorded = true;
             } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_INTERACTION)) {
