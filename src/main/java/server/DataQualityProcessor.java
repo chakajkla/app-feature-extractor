@@ -299,6 +299,8 @@ public class DataQualityProcessor
         
         if (labellingSensorRecorded && !labellingSensorValuesCorrect) {
             errorString += "LabellingSensor: values are invalid. ";
+        } else if (labellingSensorRecorded && labellingSensorValuesCorrect && (!interactionSensorRecorded || !appSensorRecorded)) {
+            errorString += "LabellingSensor: There is no interaction or app sensor data. ";
         }
         
         if (locationSensorRecorded && !locationSensorValuesCorrect) {
