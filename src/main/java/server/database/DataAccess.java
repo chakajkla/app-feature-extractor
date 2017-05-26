@@ -62,11 +62,19 @@ public class DataAccess {
             System.out.println("Opened database successfully");
 
             stmt = c.createStatement();
-
-            String sql = "INSERT INTO user_data (device_id, number_apps) "
-                    + "VALUES (\"" + userId + "\", " + numberOfApps
-                    + ");";
             
+            List<String> currentUsers = getAllUsers();
+            String sql;
+            if (currentUsers.contains(userId)) {
+                sql = "UPDATE user_data"
+                        + " SET number_apps = " + numberOfApps
+                        + " WHERE device_id = \"" + userId + "\";";
+            } else {
+                sql = "INSERT INTO user_data (device_id, number_apps) "
+                        + "VALUES (\"" + userId + "\", " + numberOfApps
+                        + ");";
+                
+            }
             stmt.executeUpdate(sql);
             c.commit();
             c.close();
