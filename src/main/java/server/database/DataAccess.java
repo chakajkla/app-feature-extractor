@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import server.nlp.NLPUtil;
 
@@ -84,6 +86,49 @@ public class DataAccess {
         System.out.println("Insert Operation done successfully");
 
         return true;
+    }
+    
+    public static List<String> getAllUsers() {
+        Connection c = null;
+        Statement stmt = null;
+        ResultSet result = null;
+        List<String> deviceIdList = new ArrayList<String>();
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:"
+                    + PathStorage.databasePath);
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully");
+
+            stmt = c.createStatement();
+
+            String sql = "select distinct(device_id) from user_data;";
+            
+            result = stmt.executeQuery(sql);
+            
+            while (result.next()) {
+                deviceIdList.add(result.getString(0));
+            }
+            result.close();
+            stmt.close();
+            c.close();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            try
+            {
+                c.close();
+            }
+            catch (SQLException e1)
+            {
+                e1.printStackTrace();
+            }
+            return null;
+        }
+        
+        
+        System.out.println("Select Operation done successfully");
+        return deviceIdList;
     }
     
     public static boolean insertNewLabelledFile(String fileName, String userId, String description) {
