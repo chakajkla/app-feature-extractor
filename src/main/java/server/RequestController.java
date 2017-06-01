@@ -1,8 +1,5 @@
 package server;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
@@ -10,11 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -24,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import server.DataQualityProcessor;
 import server.database.DataAccess;
-import server.model.TensorflowUtil;
 import server.objects.AppFeatureDescriptor;
 import server.objects.AppFeatureDataPoint;
 import server.objects.request.App;
@@ -106,6 +99,16 @@ public class RequestController {
         res.setFeatures(ft);
 
         return res;
+    }
+    
+    @RequestMapping("/notUsedApps")
+    public String notUsedApps(@RequestParam(value = "deviceid") String deviceId) {
+
+        deviceId = deviceId.trim();
+           
+        String notUsedApps = DataAccess.getNotUsedAppsWithDeviceId(deviceId);
+
+        return notUsedApps;
     }
 
     @RequestMapping(value = "/ranking", method = RequestMethod.POST)

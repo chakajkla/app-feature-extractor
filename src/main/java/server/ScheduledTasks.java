@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
@@ -20,9 +21,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import server.database.DataAccess;
+import server.objects.User;
 
 /**
- * @author Shado
+ * @author niessen
  *
  */
 @Component
@@ -33,17 +35,22 @@ public class ScheduledTasks
     public void checkUsedApps4AllUsers() {
         DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("yyyy_MM_dd");
         DateTime lastDay = new DateTime().minusDays(1);
-        List<String> deviceIdList = DataAccess.getAllUsers();
-        for (String deviceId : deviceIdList) {
-            // TODO: Retrieve actual assigned apps for user
+        List<User> userList = DataAccess.getAllUsers();
+        for (User user : userList) {
+            String assignedApps = DataAccess.getAppsFromAppGroupsWithId(user.getAppGroup());
             List<String> assignedAppPackages = new ArrayList<String>();
+            if (!StringUtils.isEmpty(assignedApps)) {
+                assignedAppPackages = Arrays.asList(StringUtils.split(assignedApps, ';'));
+            } else {
+                continue;
+            }
             File[] files = new File("/home/vmadmin/data_storage/").listFiles();
             for (File file : files) {
                 if (assignedAppPackages.isEmpty()) {
                     break;
                 }
                 String fileName = file.getName();
-                if (StringUtils.startsWith(fileName, "labeled_data_" + deviceId + dateFormatter.print(lastDay))) {
+                if (StringUtils.startsWith(fileName, "labeled_data_" + user.getDeviceId() + dateFormatter.print(lastDay))) {
                     CSVParser csvFileParser;
                     try
                     {
@@ -74,8 +81,11 @@ public class ScheduledTasks
                     
                 }
             }
-            if (assignedAppPackages.isEmpty()) {
-                // TODO: do something with this information
+            if (!assignedAppPackages.isEmpty()) {
+                String notUsedApps = StringUtils.join(assignedAppPackages, ';');
+                DataAccess.updateNotUsedApps(user.getDeviceId(), notUsedApps);
+            } else {
+                DataAccess.updateNotUsedApps(user.getDeviceId(), "");
             }
         }
     }

@@ -6,7 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 
 import server.nlp.NLPUtil;
 
@@ -14,6 +17,7 @@ import server.objects.AndroidApp;
 import server.objects.AppFeatureDataPoint;
 import server.objects.AppFeatureDescriptor;
 import server.objects.PathStorage;
+import server.objects.User;
 
 public class DataAccess {
 
@@ -63,9 +67,16 @@ public class DataAccess {
 
             stmt = c.createStatement();
             
-            List<String> currentUsers = getAllUsers();
+            List<User> currentUsers = getAllUsers();
+            boolean userExists = false;
+            for (User user : currentUsers) {
+                if (StringUtils.equals(user.getDeviceId(), userId)) {
+                    userExists = true;
+                    break;
+                }
+            }
             String sql;
-            if (currentUsers.contains(userId)) {
+            if (userExists) {
                 sql = "UPDATE user_data"
                         + " SET number_apps = " + numberOfApps
                         + " WHERE device_id = \"" + userId + "\";";
@@ -96,11 +107,49 @@ public class DataAccess {
         return true;
     }
     
-    public static List<String> getAllUsers() {
+    public static boolean updateNotUsedApps(String userId, String notUsedApps) {
+        Connection c = null;
+        Statement stmt = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:"
+                    + PathStorage.databasePath);
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully");
+
+            stmt = c.createStatement();
+            
+            String sql = "UPDATE user_data"
+                        + " SET lastAppCheck = CURRENT_TIMESTAMP"
+                        + ", notUsedApps = \"" + notUsedApps + "\""
+                        + " WHERE device_id = \"" + userId + "\";";
+            
+            stmt.executeUpdate(sql);
+            c.commit();
+            c.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            try
+            {
+                c.rollback();
+                c.close();
+            }
+            catch (SQLException e1)
+            {
+                e1.printStackTrace();
+            }
+            return false;
+        }
+        System.out.println("Update Operation done successfully");
+
+        return true;
+    }
+    
+    public static List<User> getAllUsers() {
         Connection c = null;
         Statement stmt = null;
         ResultSet result = null;
-        List<String> deviceIdList = new ArrayList<String>();
+        List<User> userList = new ArrayList<User>();
         try {
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:"
@@ -110,12 +159,18 @@ public class DataAccess {
 
             stmt = c.createStatement();
 
-            String sql = "select distinct(device_id) from user_data;";
+            String sql = "select * from user_data;";
             
             result = stmt.executeQuery(sql);
             
             while (result.next()) {
-                deviceIdList.add(result.getString(0));
+                User user = new User();
+                user.setDeviceId(result.getString(0));
+                user.setNumberOfApps(result.getInt(1));
+                user.setEmail(result.getString(2));
+                user.setAppGroup(result.getInt(3));
+                
+                userList.add(user);
             }
             result.close();
             stmt.close();
@@ -136,7 +191,97 @@ public class DataAccess {
         
         
         System.out.println("Select Operation done successfully");
-        return deviceIdList;
+        return userList;
+    }
+    
+    public static String getNotUsedAppsWithDeviceId(String deviceId) {
+        Connection c = null;
+        Statement stmt = null;
+        ResultSet result = null;
+        String apps = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:"
+                    + PathStorage.databasePath);
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully");
+
+            stmt = c.createStatement();
+
+            String sql = "select notUsedApps from user_data where device_id = \"" + deviceId + "\";";
+            
+            result = stmt.executeQuery(sql);
+            
+            
+            while (result.next()) {
+                apps = result.getString(0);
+                break;
+            }
+            result.close();
+            stmt.close();
+            c.close();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            try
+            {
+                c.close();
+            }
+            catch (SQLException e1)
+            {
+                e1.printStackTrace();
+            }
+            return null;
+        }
+        
+        
+        System.out.println("Select Operation done successfully");
+        return apps;
+    }
+    
+    public static String getAppsFromAppGroupsWithId(int id) {
+        Connection c = null;
+        Statement stmt = null;
+        ResultSet result = null;
+        String apps = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:"
+                    + PathStorage.databasePath);
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully");
+
+            stmt = c.createStatement();
+
+            String sql = "select apps from app_Groups where id = " + id + ";";
+            
+            result = stmt.executeQuery(sql);
+            
+            
+            while (result.next()) {
+                apps = result.getString(0);
+                break;
+            }
+            result.close();
+            stmt.close();
+            c.close();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            try
+            {
+                c.close();
+            }
+            catch (SQLException e1)
+            {
+                e1.printStackTrace();
+            }
+            return null;
+        }
+        
+        
+        System.out.println("Select Operation done successfully");
+        return apps;
     }
     
     public static boolean insertNewLabelledFile(String fileName, String userId, String description) {
