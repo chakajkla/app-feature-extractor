@@ -165,10 +165,10 @@ public class DataAccess {
             
             while (result.next()) {
                 User user = new User();
-                user.setDeviceId(result.getString(0));
-                user.setNumberOfApps(result.getInt(1));
-                user.setEmail(result.getString(2));
-                user.setAppGroup(result.getInt(3));
+                user.setDeviceId(result.getString(1));
+                user.setNumberOfApps(result.getInt(2));
+                user.setEmail(result.getString(3));
+                user.setAppGroup(result.getInt(4));
                 
                 userList.add(user);
             }
