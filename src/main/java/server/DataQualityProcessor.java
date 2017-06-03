@@ -342,7 +342,7 @@ public class DataQualityProcessor
     }
     
     public static String getDeviceIdFromName(String fileName, int startIndex) {
-        return StringUtils.substring(fileName, startIndex, startIndex+17);
+        return StringUtils.substring(fileName, startIndex, startIndex+16);
     }
     
 }

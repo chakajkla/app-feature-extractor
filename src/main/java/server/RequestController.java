@@ -169,7 +169,7 @@ public class RequestController {
         int numberOfApps = installedApps.length;
         
         // Extract deviceId
-        String deviceId = DataQualityProcessor.getDeviceIdFromName(fileName, 16);
+        String deviceId = DataQualityProcessor.getDeviceIdFromName(fileName, 15);
         
         DataAccess.insertNewUser(deviceId, numberOfApps);
     }
