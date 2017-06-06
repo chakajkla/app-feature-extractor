@@ -214,7 +214,7 @@ public class DataAccess {
             
             
             while (result.next()) {
-                apps = result.getString(0);
+                apps = result.getString(1);
                 break;
             }
             result.close();
@@ -253,7 +253,7 @@ public class DataAccess {
 
             stmt = c.createStatement();
 
-            String sql = "select apps from app_Groups where id = " + id + ";";
+            String sql = "select apps from app_groups where id = " + id + ";";
             
             result = stmt.executeQuery(sql);
             
