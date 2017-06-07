@@ -259,7 +259,7 @@ public class DataAccess {
             
             
             while (result.next()) {
-                apps = result.getString(0);
+                apps = result.getString(1);
                 break;
             }
             result.close();
