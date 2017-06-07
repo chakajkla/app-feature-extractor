@@ -249,12 +249,11 @@ public class DataAccess {
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:"
                     + PathStorage.databasePath);
-            c.setAutoCommit(false);
             System.out.println("Opened database successfully");
 
             stmt = c.createStatement();
 
-            String sql = "select app_group from user_data where device_id = " + id + ";";
+            String sql = "select app_group from user_data where device_id = \"" + id + "\";";
             
             result = stmt.executeQuery(sql);
             
