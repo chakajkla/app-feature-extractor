@@ -31,7 +31,7 @@ import server.objects.User;
 public class ScheduledTasks
 {
     // Every day at 1am
-    @Scheduled(cron="0 * * * * *")
+    @Scheduled(cron="0 0 1 * * *")
     public void checkUsedApps4AllUsers() {
         DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("yyyy_MM_dd");
         DateTime lastDay = new DateTime().minusDays(1);
