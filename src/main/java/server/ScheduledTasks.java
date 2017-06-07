@@ -50,7 +50,7 @@ public class ScheduledTasks
                     break;
                 }
                 String fileName = file.getName();
-                if (StringUtils.startsWith(fileName, "labeled_data_" + user.getDeviceId() + dateFormatter.print(lastDay))) {
+                if (StringUtils.startsWith(fileName, "labeled_data_" + user.getDeviceId() + "_" + dateFormatter.print(lastDay))) {
                     CSVParser csvFileParser;
                     try
                     {
