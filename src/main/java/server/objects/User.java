@@ -13,6 +13,7 @@ public class User
     private Integer numberOfApps;
     private String email;
     private Integer appGroup;
+    private Boolean secondStage;
     /**
      * @return the deviceId
      */
@@ -68,5 +69,19 @@ public class User
     public void setAppGroup(Integer appGroup)
     {
         this.appGroup = appGroup;
+    }
+    /**
+     * @return the secondStage
+     */
+    public Boolean getSecondStage()
+    {
+        return secondStage;
+    }
+    /**
+     * @param secondStage the secondStage to set
+     */
+    public void setSecondStage(Boolean secondStage)
+    {
+        this.secondStage = secondStage;
     }
 }

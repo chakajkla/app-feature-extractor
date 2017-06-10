@@ -169,6 +169,7 @@ public class DataAccess {
                 user.setNumberOfApps(result.getInt(2));
                 user.setEmail(result.getString(3));
                 user.setAppGroup(result.getInt(4));
+                user.setSecondStage(result.getBoolean(7));
                 
                 userList.add(user);
             }
@@ -192,6 +193,20 @@ public class DataAccess {
         
         System.out.println("Select Operation done successfully");
         return userList;
+    }
+    
+    public static boolean getStageWithDeviceId(String deviceId) {
+        List<User> userList = getAllUsers();
+        boolean secondStage = false;
+        
+        for (User user : userList) {
+            if (StringUtils.equals(user.getDeviceId(), deviceId)) {
+                secondStage = true;
+                break;
+            }
+        }
+        
+        return secondStage;
     }
     
     public static String getNotUsedAppsWithDeviceId(String deviceId) {

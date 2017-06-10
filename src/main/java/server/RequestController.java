@@ -111,6 +111,18 @@ public class RequestController {
         return notUsedApps;
     }
     
+    @RequestMapping("/appStage")
+    public String appStage(@RequestParam(value = "deviceid") String deviceId) {
+
+        deviceId = deviceId.trim();
+           
+        boolean secondStage = DataAccess.getStageWithDeviceId(deviceId);
+        
+        String secondStageAsString = Boolean.toString(secondStage);
+
+        return secondStageAsString;
+    }
+    
     @RequestMapping("/assignedApps")
     public String assignedApps(@RequestParam(value = "deviceid") String deviceId) {
 
