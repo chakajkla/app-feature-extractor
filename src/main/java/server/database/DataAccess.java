@@ -303,6 +303,55 @@ public class DataAccess {
         return assignedApps;
     }
     
+    public static String getAssignedAppNamesWithDeviceId(String id) {
+        Connection c = null;
+        Statement stmt = null;
+        ResultSet result = null;
+        Integer appGroup = null;
+        String assignedApps = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:"
+                    + PathStorage.databasePath);
+            System.out.println("Opened database successfully");
+
+            stmt = c.createStatement();
+
+            String sql = "select app_group from user_data where device_id = \"" + id + "\";";
+            
+            result = stmt.executeQuery(sql);
+            
+            
+            while (result.next()) {
+                appGroup = result.getInt(1);
+                break;
+            }
+            result.close();
+            stmt.close();
+            c.close();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            try
+            {
+                c.close();
+            }
+            catch (SQLException e1)
+            {
+                e1.printStackTrace();
+            }
+            return null;
+        }
+        
+        
+        if (appGroup != null) {
+            assignedApps = getAppNamesFromAppGroupsWithId(appGroup);
+            System.out.println("Select Operation done successfully");
+        }
+        
+        return assignedApps;
+    }
+    
     public static String getAppsFromAppGroupsWithId(int id) {
         Connection c = null;
         Statement stmt = null;
@@ -318,6 +367,51 @@ public class DataAccess {
             stmt = c.createStatement();
 
             String sql = "select apps from app_groups where id = " + id + ";";
+            
+            result = stmt.executeQuery(sql);
+            
+            
+            while (result.next()) {
+                apps = result.getString(1);
+                break;
+            }
+            result.close();
+            stmt.close();
+            c.close();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            try
+            {
+                c.close();
+            }
+            catch (SQLException e1)
+            {
+                e1.printStackTrace();
+            }
+            return null;
+        }
+        
+        
+        System.out.println("Select Operation done successfully");
+        return apps;
+    }
+    
+    public static String getAppNamesFromAppGroupsWithId(int id) {
+        Connection c = null;
+        Statement stmt = null;
+        ResultSet result = null;
+        String apps = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:"
+                    + PathStorage.databasePath);
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully");
+
+            stmt = c.createStatement();
+
+            String sql = "select app_names from app_groups where id = " + id + ";";
             
             result = stmt.executeQuery(sql);
             

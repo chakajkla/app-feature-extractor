@@ -132,6 +132,16 @@ public class RequestController {
 
         return assignedApps;
     }
+    
+    @RequestMapping("/assignedAppNames")
+    public String assignedAppNames(@RequestParam(value = "deviceid") String deviceId) {
+
+        deviceId = deviceId.trim();
+           
+        String assignedApps = DataAccess.getAssignedAppNamesWithDeviceId(deviceId);
+
+        return assignedApps;
+    }
 
     @RequestMapping(value = "/ranking", method = RequestMethod.POST)
     public ResponseEntity<Response> rankFeature(@RequestBody App app) {
