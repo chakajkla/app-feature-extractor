@@ -172,7 +172,7 @@ public class DataAccess {
                 user.setAppGroup(result.getInt(4));
                 user.setSecondStage(result.getBoolean(7));
                 user.setRandomID(result.getString(8));
-                user.setEndOfStudy(result.getDate(9));
+                user.setEndOfStudy(result.getString(9));
                 
                 userList.add(user);
             }
@@ -212,9 +212,9 @@ public class DataAccess {
         return secondStage;
     }
     
-    public static Date getEndOfStudyWithDeviceId(String deviceId) {
+    public static String getEndOfStudyWithDeviceId(String deviceId) {
         List<User> userList = getAllUsers();
-        Date endOfStudy = null;
+        String endOfStudy = null;
         
         for (User user : userList) {
             if (StringUtils.equals(user.getDeviceId(), deviceId)) {

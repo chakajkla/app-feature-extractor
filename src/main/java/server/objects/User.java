@@ -16,7 +16,7 @@ public class User
     private String email;
     private Integer appGroup;
     private Boolean secondStage;
-    private Date endOfStudy;
+    private String endOfStudy;
     private String randomID;
     /**
      * @return the deviceId
@@ -91,14 +91,14 @@ public class User
     /**
      * @return the endOfStudy
      */
-    public Date getEndOfStudy()
+    public String getEndOfStudy()
     {
         return endOfStudy;
     }
     /**
      * @param endOfStudy the endOfStudy to set
      */
-    public void setEndOfStudy(Date endOfStudy)
+    public void setEndOfStudy(String endOfStudy)
     {
         this.endOfStudy = endOfStudy;
     }

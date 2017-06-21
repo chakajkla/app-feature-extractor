@@ -117,11 +117,9 @@ public class RequestController {
 
         deviceId = deviceId.trim();
            
-        Date endOfStudy = DataAccess.getEndOfStudyWithDeviceId(deviceId);
+        String endOfStudy = DataAccess.getEndOfStudyWithDeviceId(deviceId);
         
-        String endOfStudyAsString = endOfStudy.toString();
-
-        return endOfStudyAsString;
+        return endOfStudy;
     }
     
     @RequestMapping("/appStage")
