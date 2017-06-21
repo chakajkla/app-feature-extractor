@@ -3,6 +3,8 @@
  */
 package server.objects;
 
+import java.util.Date;
+
 /**
  * @author niessen
  *
@@ -14,6 +16,8 @@ public class User
     private String email;
     private Integer appGroup;
     private Boolean secondStage;
+    private Date endOfStudy;
+    private String randomID;
     /**
      * @return the deviceId
      */
@@ -83,5 +87,33 @@ public class User
     public void setSecondStage(Boolean secondStage)
     {
         this.secondStage = secondStage;
+    }
+    /**
+     * @return the endOfStudy
+     */
+    public Date getEndOfStudy()
+    {
+        return endOfStudy;
+    }
+    /**
+     * @param endOfStudy the endOfStudy to set
+     */
+    public void setEndOfStudy(Date endOfStudy)
+    {
+        this.endOfStudy = endOfStudy;
+    }
+    /**
+     * @return the randomID
+     */
+    public String getRandomID()
+    {
+        return randomID;
+    }
+    /**
+     * @param randomID the randomID to set
+     */
+    public void setRandomID(String randomID)
+    {
+        this.randomID = randomID;
     }
 }

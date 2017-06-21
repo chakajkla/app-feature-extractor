@@ -112,6 +112,18 @@ public class RequestController {
         return notUsedApps;
     }
     
+    @RequestMapping("/endOfStudy")
+    public String endOfStudy(@RequestParam(value = "deviceid") String deviceId) {
+
+        deviceId = deviceId.trim();
+           
+        Date endOfStudy = DataAccess.getEndOfStudyWithDeviceId(deviceId);
+        
+        String endOfStudyAsString = endOfStudy.toString();
+
+        return endOfStudyAsString;
+    }
+    
     @RequestMapping("/appStage")
     public String appStage(@RequestParam(value = "deviceid") String deviceId) {
 
