@@ -31,7 +31,8 @@ public class RequestController {
     public
     @ResponseBody
     String handleFileUpload(
-            @RequestParam("file") MultipartFile file) {
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "randomID") String randomID) {
         String name = file.getOriginalFilename();
         String filePath = "/home/vmadmin/data_storage/"; //default for labelled data
         if (name.contains("installed_apps")) {
@@ -53,7 +54,7 @@ public class RequestController {
                 
                 // Inserting new user into db
                 if (name.contains("installed_apps")) {
-                    insertNewUserIntoDb(file, name);
+                    insertNewUserIntoDb(file, name, randomID);
                 }
                 // Data quality check for labeled data
                 else if (name.contains("labeled_data")) {
@@ -194,7 +195,7 @@ public class RequestController {
 //        return new ResponseEntity<App>(car, HttpStatus.OK);
 //    }
     
-    private void insertNewUserIntoDb(MultipartFile file, String fileName) {
+    private void insertNewUserIntoDb(MultipartFile file, String fileName, String randomID) {
         // Extract number of apps
         String installedAppsString = extractFileString(file);
         String[] installedApps = StringUtils.split(installedAppsString, ';');
@@ -203,7 +204,7 @@ public class RequestController {
         // Extract deviceId
         String deviceId = DataQualityProcessor.getDeviceIdFromName(fileName, 15);
         
-        DataAccess.insertNewUser(deviceId, numberOfApps);
+        DataAccess.insertNewUser(deviceId, numberOfApps, randomID);
     }
     
     private String extractFileString(MultipartFile file) {

@@ -55,7 +55,7 @@ public class DataAccess {
 
     }
     
-    public static boolean insertNewUser(String userId, int numberOfApps) {
+    public static boolean insertNewUser(String userId, int numberOfApps, String randomID) {
         Connection c = null;
         Statement stmt = null;
         try {
@@ -79,11 +79,12 @@ public class DataAccess {
             if (userExists) {
                 sql = "UPDATE user_data"
                         + " SET number_apps = " + numberOfApps
+                        +", random_id = " + randomID
                         + " WHERE device_id = \"" + userId + "\";";
             } else {
-                sql = "INSERT INTO user_data (device_id, number_apps) "
-                        + "VALUES (\"" + userId + "\", " + numberOfApps
-                        + ");";
+                sql = "INSERT INTO user_data (device_id, number_apps, random_id) "
+                        + "VALUES (\"" + userId + "\", " + numberOfApps + ", \"" + randomID 
+                        + "\");";
                 
             }
             stmt.executeUpdate(sql);
