@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -58,6 +59,8 @@ public class DataAccess {
     public static boolean insertNewUser(String userId, int numberOfApps, String randomID) {
         Connection c = null;
         Statement stmt = null;
+        String endOfStudyId = StringUtils.substring(UUID.randomUUID().toString(), 0, 6);
+        
         try {
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:"
@@ -82,9 +85,9 @@ public class DataAccess {
                         +", random_id = " + randomID
                         + " WHERE device_id = \"" + userId + "\";";
             } else {
-                sql = "INSERT INTO user_data (device_id, number_apps, random_id) "
+                sql = "INSERT INTO user_data (device_id, number_apps, random_id, end_of_study_id) "
                         + "VALUES (\"" + userId + "\", " + numberOfApps + ", \"" + randomID 
-                        + "\");";
+                        + "\", \"" + endOfStudyId + "\");";
                 
             }
             stmt.executeUpdate(sql);
@@ -224,6 +227,51 @@ public class DataAccess {
         }
         
         return endOfStudy;
+    }
+    
+    public static String getEndOfStudyIdWithDeviceId(String deviceId) {
+        Connection c = null;
+        Statement stmt = null;
+        ResultSet result = null;
+        String endOfStudyId = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:"
+                    + PathStorage.databasePath);
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully");
+
+            stmt = c.createStatement();
+
+            String sql = "select end_of_study_id from user_data where device_id = \"" + deviceId + "\";";
+            
+            result = stmt.executeQuery(sql);
+            
+            
+            while (result.next()) {
+                endOfStudyId = result.getString(1);
+                break;
+            }
+            result.close();
+            stmt.close();
+            c.close();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            try
+            {
+                c.close();
+            }
+            catch (SQLException e1)
+            {
+                e1.printStackTrace();
+            }
+            return null;
+        }
+        
+        
+        System.out.println("Select Operation done successfully");
+        return endOfStudyId;
     }
     
     public static String getNotUsedAppsWithDeviceId(String deviceId) {

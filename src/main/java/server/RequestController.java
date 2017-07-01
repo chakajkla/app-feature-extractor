@@ -122,6 +122,16 @@ public class RequestController {
         return endOfStudy;
     }
     
+    @RequestMapping("/endOfStudyId")
+    public String endOfStudyId(@RequestParam(value = "deviceid") String deviceId) {
+
+        deviceId = deviceId.trim();
+           
+        String endOfStudyId = DataAccess.getEndOfStudyIdWithDeviceId(deviceId);
+        
+        return endOfStudyId;
+    }
+    
     @RequestMapping("/appStage")
     public String appStage(@RequestParam(value = "deviceid") String deviceId) {
 
