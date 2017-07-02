@@ -34,7 +34,7 @@ public class RequestController {
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "randomID") String randomID) {
         String name = file.getOriginalFilename();
-        String filePath = "/home/vmadmin/data_storage/"; //default for labelled data
+        String filePath = "/home/vmadmin/data_storage/labeled_data"; //default for labelled data
         if (name.contains("installed_apps")) {
             filePath = "/home/vmadmin/data_storage/packages/";
         } else if (name.contains("manual_features")) {
