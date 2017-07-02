@@ -207,7 +207,7 @@ public class DataAccess {
         
         for (User user : userList) {
             if (StringUtils.equals(user.getDeviceId(), deviceId)) {
-                secondStage = true;
+                secondStage = user.getSecondStage();
                 break;
             }
         }
