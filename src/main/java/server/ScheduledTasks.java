@@ -44,7 +44,7 @@ public class ScheduledTasks
             } else {
                 continue;
             }
-            File[] files = new File("/home/vmadmin/data_storage/").listFiles();
+            File[] files = new File("/home/vmadmin/data_storage/labeled_data/").listFiles();
             for (File file : files) {
                 if (assignedAppPackages.isEmpty()) {
                     break;
