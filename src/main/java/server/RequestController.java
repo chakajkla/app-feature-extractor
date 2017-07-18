@@ -12,7 +12,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Stream;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,7 +54,7 @@ public class RequestController {
                 stream.write(bytes);
                 stream.close();
                 System.out.println("You successfully uploaded " + name + " into " + name + "-uploaded !");
-                
+
                 // Inserting new user into db
                 if (name.contains("installed_apps")) {
                     insertNewUserIntoDb(file, name, randomID);
@@ -60,8 +63,11 @@ public class RequestController {
                 else if (name.contains("labeled_data")) {
                     DataAccess.insertNewLabelledFile(name, DataQualityProcessor.getDeviceIdFromName(name, 13), "not yet checked");
                     new DataQualityProcessor(filePath, name).checkLabeledDataFile();
+
+                    //update labelling count
+                    //updateUserLabellingCount(filePath, name);
                 }
-                
+
                 return "You successfully uploaded " + name + " into " + name + "-uploaded !";
             } catch (Exception e) {
                 e.printStackTrace();
@@ -101,64 +107,64 @@ public class RequestController {
 
         return res;
     }
-    
+
     @RequestMapping("/notUsedApps")
     public String notUsedApps(@RequestParam(value = "deviceid") String deviceId) {
 
         deviceId = deviceId.trim();
-           
+
         String notUsedApps = DataAccess.getNotUsedAppsWithDeviceId(deviceId);
 
         return notUsedApps;
     }
-    
+
     @RequestMapping("/endOfStudy")
     public String endOfStudy(@RequestParam(value = "deviceid") String deviceId) {
 
         deviceId = deviceId.trim();
-           
+
         String endOfStudy = DataAccess.getEndOfStudyWithDeviceId(deviceId);
-        
+
         return endOfStudy;
     }
-    
+
     @RequestMapping("/endOfStudyId")
     public String endOfStudyId(@RequestParam(value = "deviceid") String deviceId) {
 
         deviceId = deviceId.trim();
-           
+
         String endOfStudyId = DataAccess.getEndOfStudyIdWithDeviceId(deviceId);
-        
+
         return endOfStudyId;
     }
-    
+
     @RequestMapping("/appStage")
     public String appStage(@RequestParam(value = "deviceid") String deviceId) {
 
         deviceId = deviceId.trim();
-           
+
         boolean secondStage = DataAccess.getStageWithDeviceId(deviceId);
-        
+
         String secondStageAsString = Boolean.toString(secondStage);
 
         return secondStageAsString;
     }
-    
+
     @RequestMapping("/assignedApps")
     public String assignedApps(@RequestParam(value = "deviceid") String deviceId) {
 
         deviceId = deviceId.trim();
-           
+
         String assignedApps = DataAccess.getAssignedAppsWithDeviceId(deviceId);
 
         return assignedApps;
     }
-    
+
     @RequestMapping("/assignedAppNames")
     public String assignedAppNames(@RequestParam(value = "deviceid") String deviceId) {
 
         deviceId = deviceId.trim();
-           
+
         String assignedApps = DataAccess.getAssignedAppNamesWithDeviceId(deviceId);
 
         return assignedApps;
@@ -167,7 +173,7 @@ public class RequestController {
     @RequestMapping(value = "/ranking", method = RequestMethod.POST)
     public ResponseEntity<Response> rankFeature(@RequestBody App app) {
 
-        if(app == null){
+        if (app == null) {
             return new ResponseEntity<>(new Response(null), HttpStatus.BAD_REQUEST);
         }
 
@@ -214,37 +220,70 @@ public class RequestController {
 //
 //        return new ResponseEntity<App>(car, HttpStatus.OK);
 //    }
-    
+
     private void insertNewUserIntoDb(MultipartFile file, String fileName, String randomID) {
         // Extract number of apps
         String installedAppsString = extractFileString(file);
         String[] installedApps = StringUtils.split(installedAppsString, ';');
         int numberOfApps = installedApps.length;
-        
+
         // Extract deviceId
         String deviceId = DataQualityProcessor.getDeviceIdFromName(fileName, 15);
-        
+
         DataAccess.insertNewUser(deviceId, numberOfApps, randomID);
     }
-    
+
+    private void updateUserLabellingCount(String filePath, String fileName) {
+
+        int numberOfLabellings = countLabels(filePath, fileName);
+        // Extract deviceId
+        String deviceId = DataQualityProcessor.getDeviceIdFromName(fileName, 15);
+        DataAccess.updateLabellingCount(deviceId, numberOfLabellings);
+
+    }
+
+    public static int countLabels(String filePath, String fileName) {
+
+        File file = new File(filePath + fileName);
+
+        if (!file.exists()) {
+            return 0;
+        }
+
+        ArrayList<String> labelledLines = new ArrayList<>();
+
+        //read file into stream, try-with-resources
+        try (Stream<String> stream = Files.lines(Paths.get(file.getAbsolutePath()))) {
+
+            stream.forEach(elem -> {
+                if (elem.contains("CONTEXT_SENSOR_LABELLING")) {
+                    labelledLines.add(elem);
+                }
+            });
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return labelledLines.size() > 0 ? labelledLines.size() / 3 : 0;
+
+    }
+
     private String extractFileString(MultipartFile file) {
-        try
-        {
+        try {
             InputStream fileInputStream = file.getInputStream();
             StringWriter writer = new StringWriter();
             IOUtils.copy(fileInputStream, writer, "UTF-8");
             String fileString = writer.toString();
             writer.close();
             fileInputStream.close();
-            
+
             return fileString;
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-           return null;
+        return null;
     }
 
 }

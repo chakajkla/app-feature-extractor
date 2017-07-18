@@ -18,6 +18,22 @@ public class User
     private Boolean secondStage;
     private String endOfStudy;
     private String randomID;
+    private Integer labellingCount;
+
+    /**
+     * @return the labellingCount
+     */
+    public Integer getLabellingCount()
+    {
+        return labellingCount;
+    }
+    /**
+     * @param labellingCount
+     */
+    public void setLabellingCount(Integer labellingCount)
+    {
+        this.labellingCount = labellingCount;
+    }
     /**
      * @return the deviceId
      */

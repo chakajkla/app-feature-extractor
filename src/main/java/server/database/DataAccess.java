@@ -148,6 +148,47 @@ public class DataAccess {
 
         return true;
     }
+
+
+    public static boolean updateLabellingCount(String userId, int labellingCount) {
+
+        int previousCount = getLabellingCountWithDeviceId(userId);
+
+        Connection c = null;
+        Statement stmt = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:"
+                    + PathStorage.databasePath);
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully");
+
+            stmt = c.createStatement();
+
+            String sql = "UPDATE user_data"
+                    + " SET labelling_count = " + (previousCount + labellingCount)
+                    + " WHERE device_id = \"" + userId + "\";";
+
+            stmt.executeUpdate(sql);
+            c.commit();
+            c.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            try
+            {
+                c.rollback();
+                c.close();
+            }
+            catch (SQLException e1)
+            {
+                e1.printStackTrace();
+            }
+            return false;
+        }
+        System.out.println("Update Operation done successfully");
+
+        return true;
+    }
     
     public static List<User> getAllUsers() {
         Connection c = null;
@@ -199,6 +240,18 @@ public class DataAccess {
         
         System.out.println("Select Operation done successfully");
         return userList;
+    }
+
+    public static int getLabellingCountWithDeviceId(String deviceId) {
+        List<User> userList = getAllUsers();
+
+        for (User user : userList) {
+            if (StringUtils.equals(user.getDeviceId(), deviceId)) {
+                return user.getLabellingCount();
+            }
+        }
+
+        return 0;
     }
     
     public static boolean getStageWithDeviceId(String deviceId) {
