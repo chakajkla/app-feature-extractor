@@ -65,7 +65,7 @@ public class RequestController {
                     new DataQualityProcessor(filePath, name).checkLabeledDataFile();
 
                     //update labelling count
-                    //updateUserLabellingCount(filePath, name);
+                    updateUserLabellingCount(filePath, name);
                 }
 
                 return "You successfully uploaded " + name + " into " + name + "-uploaded !";
