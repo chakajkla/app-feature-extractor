@@ -217,6 +217,7 @@ public class DataAccess {
                 user.setSecondStage(result.getBoolean(7));
                 user.setRandomID(result.getString(8));
                 user.setEndOfStudy(result.getString(9));
+                user.setLabellingCount(result.getInt(12));
                 
                 userList.add(user);
             }
