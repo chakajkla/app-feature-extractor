@@ -51,6 +51,8 @@ public class DataQualityProcessor
     private boolean settingsSensorValuesCorrect = false;
     private boolean labellingSensorValuesCorrect = false;
     private boolean locationSensorValuesCorrect = false;
+    private boolean appSensorValuesCorrect = false;
+    private boolean interactionSensorValuesCorrect = false
     
     public DataQualityProcessor(String filePath, String fileName) {
         this.filePath = filePath;
@@ -73,6 +75,15 @@ public class DataQualityProcessor
             
             // Check all default sensors are recorded
             check4SensorsRecorded(csvRecords);
+            if(interactionSensorRecorded){
+                interactionSensorValuesCorrect = checkInteractionSensorValues(csvRecords);
+            }
+            if(appSensorRecorded){
+                appSensorValuesCorrect = checkAppSensorValues(csvRecords);
+            }
+            if (interactionSensorRecorded) {
+                locationSensorValuesCorrect = checkLocationSensorValues(csvRecords);
+            }
             if (awarenessSensorRecorded) {
                 awarenessSensorValuesCorrect = checkAwarenessSensorValues(csvRecords);
             }
@@ -141,6 +152,70 @@ public class DataQualityProcessor
             return false;
         }
         return true;
+    }
+
+    private boolean checkInteractionSensorValues(List<CSVRecord> csvRecords) {
+        boolean connectivitySensorValuesCorrect = false;
+        for (CSVRecord record : csvRecords) {
+            if (record.size() < 7) {
+                continue;
+            }
+            if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_INTERACTION)) {
+                switch(record.get("property_key")) {
+                    case "package_name":
+                        String value = StringUtils.trimToEmpty(record.get("property_value"));
+                        if (!StringUtils.equalsIgnoreCase(value, "null") && StringUtils.isNotEmpty(value)) {
+                            interactionSensorValuesCorrect = true;
+                        }
+                        else{
+                            interactionSensorValuesCorrect = false;
+                        }
+                        break;
+                    case "app_name":
+                        String value = StringUtils.trimToEmpty(record.get("property_value"));
+                        if (!StringUtils.equalsIgnoreCase(value, "null") && StringUtils.isNotEmpty(value)) {
+                            interactionSensorValuesCorrect = true;
+                        }
+                        else{
+                            interactionSensorValuesCorrect = false;
+                        }
+                        break;
+                }
+            }
+        }
+        return interactionSensorValuesCorrect;
+    }
+
+    private boolean checkAppSensorValues(List<CSVRecord> csvRecords) {
+        boolean connectivitySensorValuesCorrect = false;
+        for (CSVRecord record : csvRecords) {
+            if (record.size() < 7) {
+                continue;
+            }
+            if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_APP)) {
+                switch(record.get("property_key")) {
+                    case "packagename":
+                        String value = StringUtils.trimToEmpty(record.get("property_value"));
+                        if (!StringUtils.equalsIgnoreCase(value, "null") && StringUtils.isNotEmpty(value)) {
+                            appSensorValuesCorrect = true;
+                        }
+                        else{
+                            appSensorValuesCorrect = false;
+                        }
+                        break;
+                    case "appname":
+                        String value = StringUtils.trimToEmpty(record.get("property_value"));
+                        if (!StringUtils.equalsIgnoreCase(value, "null") && StringUtils.isNotEmpty(value)) {
+                            appSensorValuesCorrect = true;
+                        }
+                        else{
+                            appSensorValuesCorrect = false;
+                        }
+                        break;
+                }
+            }
+        }
+        return appSensorValuesCorrect;
     }
     
     private boolean checkConnectivitySensorValues(List<CSVRecord> csvRecords) {
@@ -305,6 +380,14 @@ public class DataQualityProcessor
         
         if (locationSensorRecorded && !locationSensorValuesCorrect) {
             errorString += "LocationSensor: values are invalid. ";
+        }
+
+        if (appSensorRecorded && !appSensorValuesCorrect) {
+            errorString += "AppSensor: values are invalid. ";
+        }
+
+        if (interactionSensorRecorded && !interactionSensorValuesCorrect) {
+            errorString += "InteractionSensor: values are invalid. ";
         }
         
         if (StringUtils.isEmpty(errorString)) {
