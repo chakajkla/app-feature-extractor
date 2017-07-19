@@ -1,7 +1,6 @@
 package server;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,17 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Stream;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import server.DataQualityProcessor;
 import server.database.DataAccess;
 import server.objects.AppFeatureDescriptor;
 import server.objects.AppFeatureDataPoint;
@@ -57,15 +49,19 @@ public class RequestController {
 
                 // Inserting new user into db
                 if (name.contains("installed_apps")) {
-                    insertNewUserIntoDb(file, name, randomID);
-                }
-                // Data quality check for labeled data
-                else if (name.contains("labeled_data")) {
+                    RequestControllerUtil.insertNewUserIntoDb(file, name, randomID);
+                } else if (name.contains("labeled_data")) {
+
+                    // Data quality check for labeled data
                     DataAccess.insertNewLabelledFile(name, DataQualityProcessor.getDeviceIdFromName(name, 13), "not yet checked");
                     new DataQualityProcessor(filePath, name).checkLabeledDataFile();
 
                     //update labelling count
-                    updateUserLabellingCount(filePath, name);
+                    RequestControllerUtil.updateUserLabellingCount(filePath, name);
+
+                    //update missing packages
+                    RequestControllerUtil.updateMissingPackages(filePath, name);
+
                 }
 
                 return "You successfully uploaded " + name + " into " + name + "-uploaded !";
@@ -221,69 +217,8 @@ public class RequestController {
 //        return new ResponseEntity<App>(car, HttpStatus.OK);
 //    }
 
-    private void insertNewUserIntoDb(MultipartFile file, String fileName, String randomID) {
-        // Extract number of apps
-        String installedAppsString = extractFileString(file);
-        String[] installedApps = StringUtils.split(installedAppsString, ';');
-        int numberOfApps = installedApps.length;
 
-        // Extract deviceId
-        String deviceId = DataQualityProcessor.getDeviceIdFromName(fileName, 15);
 
-        DataAccess.insertNewUser(deviceId, numberOfApps, randomID);
-    }
 
-    private void updateUserLabellingCount(String filePath, String fileName) {
-
-        int numberOfLabellings = countLabels(filePath, fileName);
-        // Extract deviceId
-        String deviceId = DataQualityProcessor.getDeviceIdFromName(fileName, 15);
-        DataAccess.updateLabellingCount(deviceId, numberOfLabellings);
-
-    }
-
-    public static int countLabels(String filePath, String fileName) {
-
-        File file = new File(filePath + fileName);
-
-        if (!file.exists()) {
-            return 0;
-        }
-
-        ArrayList<String> labelledLines = new ArrayList<>();
-
-        //read file into stream, try-with-resources
-        try (Stream<String> stream = Files.lines(Paths.get(file.getAbsolutePath()))) {
-
-            stream.forEach(elem -> {
-                if (elem.contains("CONTEXT_SENSOR_LABELLING")) {
-                    labelledLines.add(elem);
-                }
-            });
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return labelledLines.size() > 0 ? labelledLines.size() / 3 : 0;
-
-    }
-
-    private String extractFileString(MultipartFile file) {
-        try {
-            InputStream fileInputStream = file.getInputStream();
-            StringWriter writer = new StringWriter();
-            IOUtils.copy(fileInputStream, writer, "UTF-8");
-            String fileString = writer.toString();
-            writer.close();
-            fileInputStream.close();
-
-            return fileString;
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return null;
-    }
 
 }

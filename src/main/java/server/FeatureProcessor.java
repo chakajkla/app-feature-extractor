@@ -87,7 +87,7 @@ public class FeatureProcessor {
 
     private static final String missingPackageFilePath = "/home/vmadmin/data_storage/packages";
 
-    private static void appendPackageID(String packageID) {
+    public static void appendPackageID(String packageID) {
 
         Path FILE_PATH = Paths.get(missingPackageFilePath, "missing_packages.txt");
         List<String> packageIDs = new ArrayList<>();
@@ -223,7 +223,7 @@ public class FeatureProcessor {
 
     private static final String apps_features_directory = "/home/vmadmin/server/data/evaluation/apps/features";
 
-    private static boolean containPackageIDOffline(String packageID) {
+    public static boolean containPackageIDOffline(String packageID) {
         File dir = new File(apps_features_directory);
         if (!dir.exists()) {
             return false;
