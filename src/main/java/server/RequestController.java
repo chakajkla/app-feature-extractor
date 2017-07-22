@@ -1,6 +1,7 @@
 package server;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +41,11 @@ public class RequestController {
 
         if (!file.isEmpty()) {
             try {
+                String deviceId = DataQualityProcessor.getDeviceIdFromName(fileName, 15);
+                boolean secondStage = DataAccess.getStageWithDeviceId(deviceId);
+                if (name.contains("labeled_data") && !secondStage) {
+                    name = StringUtils.left(name, StringUtils.indexOf(name, ".csv")).concat("_first_stage.csv");
+                }
                 byte[] bytes = file.getBytes();
                 BufferedOutputStream stream =
                         new BufferedOutputStream(new FileOutputStream(new File(filePath + name)));
@@ -53,7 +59,7 @@ public class RequestController {
                 } else if (name.contains("labeled_data")) {
 
                     // Data quality check for labeled data
-                    DataAccess.insertNewLabelledFile(name, DataQualityProcessor.getDeviceIdFromName(name, 13), "not yet checked");
+                    DataAccess.insertNewLabelledFile(name, DataQualityProcessor.getDeviceIdFromName(name, 13), "not yet checked", secondStage);
                     new DataQualityProcessor(filePath, name).checkLabeledDataFile();
 
                     //update labelling count

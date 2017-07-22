@@ -561,7 +561,7 @@ public class DataAccess {
         return apps;
     }
     
-    public static boolean insertNewLabelledFile(String fileName, String userId, String description) {
+    public static boolean insertNewLabelledFile(String fileName, String userId, String description, boolean secondStage) {
         Connection c = null;
         Statement stmt = null;
         try {
@@ -573,8 +573,8 @@ public class DataAccess {
 
             stmt = c.createStatement();
 
-            String sql = "INSERT INTO labelled_files (file_name, file_State, user_id, state_desc) "
-                    + "VALUES (\"" + fileName + "\", 0, \"" + userId + "\", \"" + description + "\");";
+            String sql = "INSERT INTO labelled_files (file_name, file_State, user_id, state_desc, first_stage) "
+                    + "VALUES (\"" + fileName + "\", 0, \"" + userId + "\", \"" + description + "\", " + (secondStage ? 0 : 1) + ");";
             
             stmt.executeUpdate(sql);
             c.commit();
