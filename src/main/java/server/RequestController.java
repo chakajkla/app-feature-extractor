@@ -28,7 +28,10 @@ public class RequestController {
     @ResponseBody
     String handleFileUpload(
             @RequestParam("file") MultipartFile file,
-            @RequestParam(value = "randomID") String randomID) {
+            @RequestParam(value = "randomID") String randomID,
+            @RequestParam(value = "osVersion") String osVersion,
+            @RequestParam(value = "sdkVersion") String sdkVersion,
+            @RequestParam(value = "phoneModel") String phoneModel) {
         String name = file.getOriginalFilename();
         String filePath = "/home/vmadmin/data_storage/labeled_data/"; //default for labelled data
         if (name.contains("installed_apps")) {
@@ -41,7 +44,7 @@ public class RequestController {
 
         if (!file.isEmpty()) {
             try {
-                String deviceId = DataQualityProcessor.getDeviceIdFromName(fileName, 15);
+                String deviceId = DataQualityProcessor.getDeviceIdFromName(name, 15);
                 boolean secondStage = DataAccess.getStageWithDeviceId(deviceId);
                 if (name.contains("labeled_data") && !secondStage) {
                     name = StringUtils.left(name, StringUtils.indexOf(name, ".csv")).concat("_first_stage.csv");
@@ -55,7 +58,7 @@ public class RequestController {
 
                 // Inserting new user into db
                 if (name.contains("installed_apps")) {
-                    RequestControllerUtil.insertNewUserIntoDb(file, name, randomID);
+                    RequestControllerUtil.insertNewUserIntoDb(file, name, randomID, osVersion, sdkVersion, phoneModel);
                 } else if (name.contains("labeled_data")) {
 
                     // Data quality check for labeled data

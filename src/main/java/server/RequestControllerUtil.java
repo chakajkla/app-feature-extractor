@@ -128,7 +128,7 @@ public class RequestControllerUtil {
         return null;
     }
 
-    public static void insertNewUserIntoDb(MultipartFile file, String fileName, String randomID) {
+    public static void insertNewUserIntoDb(MultipartFile file, String fileName, String randomID, String osVersion, String sdkVersion, String phoneModel) {
         // Extract number of apps
         String installedAppsString = extractFileString(file);
         String[] installedApps = StringUtils.split(installedAppsString, ';');
@@ -137,7 +137,7 @@ public class RequestControllerUtil {
         // Extract deviceId
         String deviceId = DataQualityProcessor.getDeviceIdFromName(fileName, 15);
 
-        DataAccess.insertNewUser(deviceId, numberOfApps, randomID);
+        DataAccess.insertNewUser(deviceId, numberOfApps, randomID, osVersion, sdkVersion, phoneModel);
     }
 
 //    public static void main(String[] args){

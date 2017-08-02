@@ -56,7 +56,7 @@ public class DataAccess {
 
     }
     
-    public static boolean insertNewUser(String userId, int numberOfApps, String randomID) {
+    public static boolean insertNewUser(String userId, int numberOfApps, String randomID, String osVersion, String sdkVersion, String phoneModel) {
         Connection c = null;
         Statement stmt = null;
         String endOfStudyId = StringUtils.substring(UUID.randomUUID().toString(), 0, 6);
@@ -83,11 +83,14 @@ public class DataAccess {
                 sql = "UPDATE user_data"
                         + " SET number_apps = " + numberOfApps
                         +", random_id = " + randomID
-                        + " WHERE device_id = \"" + userId + "\";";
+                        +", os_version = '" + osVersion
+                        +"', sdk_version = '" + sdkVersion
+                        +"', phone_model = '" + phoneModel
+                        + "' WHERE device_id = \"" + userId + "\";";
             } else {
-                sql = "INSERT INTO user_data (device_id, number_apps, random_id, end_of_study_id) "
+                sql = "INSERT INTO user_data (device_id, number_apps, random_id, end_of_study_id, os_version, sdk_version, phone_model) "
                         + "VALUES (\"" + userId + "\", " + numberOfApps + ", \"" + randomID 
-                        + "\", \"" + endOfStudyId + "\");";
+                        + "\", \"" + endOfStudyId + "\", \"" + osVersion + "\", \"" + sdkVersion + "\", \"" + phoneModel + "\");";
                 
             }
             stmt.executeUpdate(sql);
