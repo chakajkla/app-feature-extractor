@@ -52,7 +52,7 @@ public class DataQualityProcessor
     private boolean labellingSensorValuesCorrect = false;
     private boolean locationSensorValuesCorrect = false;
     private boolean appSensorValuesCorrect = false;
-    private boolean interactionSensorValuesCorrect = false
+    private boolean interactionSensorValuesCorrect = false;
     
     public DataQualityProcessor(String filePath, String fileName) {
         this.filePath = filePath;
@@ -155,7 +155,7 @@ public class DataQualityProcessor
     }
 
     private boolean checkInteractionSensorValues(List<CSVRecord> csvRecords) {
-        boolean connectivitySensorValuesCorrect = false;
+        boolean interactionSensorValuesCorrect = false;
         for (CSVRecord record : csvRecords) {
             if (record.size() < 7) {
                 continue;
@@ -163,8 +163,8 @@ public class DataQualityProcessor
             if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_INTERACTION)) {
                 switch(record.get("property_key")) {
                     case "package_name":
-                        String value = StringUtils.trimToEmpty(record.get("property_value"));
-                        if (!StringUtils.equalsIgnoreCase(value, "null") && StringUtils.isNotEmpty(value)) {
+                        String packageName = StringUtils.trimToEmpty(record.get("property_value"));
+                        if (!StringUtils.equalsIgnoreCase(packageName, "null") && StringUtils.isNotEmpty(packageName)) {
                             interactionSensorValuesCorrect = true;
                         }
                         else{
@@ -172,8 +172,8 @@ public class DataQualityProcessor
                         }
                         break;
                     case "app_name":
-                        String value = StringUtils.trimToEmpty(record.get("property_value"));
-                        if (!StringUtils.equalsIgnoreCase(value, "null") && StringUtils.isNotEmpty(value)) {
+                        String appName = StringUtils.trimToEmpty(record.get("property_value"));
+                        if (!StringUtils.equalsIgnoreCase(appName, "null") && StringUtils.isNotEmpty(appName)) {
                             interactionSensorValuesCorrect = true;
                         }
                         else{
@@ -187,7 +187,7 @@ public class DataQualityProcessor
     }
 
     private boolean checkAppSensorValues(List<CSVRecord> csvRecords) {
-        boolean connectivitySensorValuesCorrect = false;
+        boolean appSensorValuesCorrect = false;
         for (CSVRecord record : csvRecords) {
             if (record.size() < 7) {
                 continue;
@@ -195,8 +195,8 @@ public class DataQualityProcessor
             if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_APP)) {
                 switch(record.get("property_key")) {
                     case "packagename":
-                        String value = StringUtils.trimToEmpty(record.get("property_value"));
-                        if (!StringUtils.equalsIgnoreCase(value, "null") && StringUtils.isNotEmpty(value)) {
+                        String packageName = StringUtils.trimToEmpty(record.get("property_value"));
+                        if (!StringUtils.equalsIgnoreCase(packageName, "null") && StringUtils.isNotEmpty(packageName)) {
                             appSensorValuesCorrect = true;
                         }
                         else{
@@ -204,8 +204,8 @@ public class DataQualityProcessor
                         }
                         break;
                     case "appname":
-                        String value = StringUtils.trimToEmpty(record.get("property_value"));
-                        if (!StringUtils.equalsIgnoreCase(value, "null") && StringUtils.isNotEmpty(value)) {
+                        String appName = StringUtils.trimToEmpty(record.get("property_value"));
+                        if (!StringUtils.equalsIgnoreCase(appName, "null") && StringUtils.isNotEmpty(appName)) {
                             appSensorValuesCorrect = true;
                         }
                         else{
