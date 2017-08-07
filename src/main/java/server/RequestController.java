@@ -44,7 +44,7 @@ public class RequestController {
 
         if (!file.isEmpty()) {
             try {
-                String deviceId = DataQualityProcessor.getDeviceIdFromName(name, 15);
+                String deviceId = DataQualityProcessor.getDeviceIdFromName(name, 13);
                 boolean secondStage = DataAccess.getStageWithDeviceId(deviceId);
                 if (name.contains("labeled_data") && !secondStage) {
                     name = StringUtils.left(name, StringUtils.indexOf(name, ".csv")).concat("_first_stage.csv");
