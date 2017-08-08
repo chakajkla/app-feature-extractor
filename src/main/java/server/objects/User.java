@@ -17,7 +17,6 @@ public class User
     private Integer appGroup;
     private Boolean secondStage;
     private String endOfStudy;
-    private String randomID;
     private Integer labellingCount;
 
     /**
@@ -117,19 +116,5 @@ public class User
     public void setEndOfStudy(String endOfStudy)
     {
         this.endOfStudy = endOfStudy;
-    }
-    /**
-     * @return the randomID
-     */
-    public String getRandomID()
-    {
-        return randomID;
-    }
-    /**
-     * @param randomID the randomID to set
-     */
-    public void setRandomID(String randomID)
-    {
-        this.randomID = randomID;
     }
 }

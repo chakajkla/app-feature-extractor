@@ -28,7 +28,6 @@ public class RequestController {
     @ResponseBody
     String handleFileUpload(
             @RequestParam("file") MultipartFile file,
-            @RequestParam(value = "randomID") String randomID,
             @RequestParam(value = "osVersion") String osVersion,
             @RequestParam(value = "sdkVersion") String sdkVersion,
             @RequestParam(value = "phoneModel") String phoneModel) {
@@ -58,7 +57,7 @@ public class RequestController {
 
                 // Inserting new user into db
                 if (name.contains("installed_apps")) {
-                    RequestControllerUtil.insertNewUserIntoDb(file, name, randomID, osVersion, sdkVersion, phoneModel);
+                    RequestControllerUtil.insertNewUserIntoDb(file, name, osVersion, sdkVersion, phoneModel);
                 } else if (name.contains("labeled_data")) {
 
                     // Data quality check for labeled data

@@ -56,7 +56,7 @@ public class DataAccess {
 
     }
     
-    public static boolean insertNewUser(String userId, int numberOfApps, String randomID, String osVersion, String sdkVersion, String phoneModel) {
+    public static boolean insertNewUser(String userId, int numberOfApps, String osVersion, String sdkVersion, String phoneModel) {
         Connection c = null;
         Statement stmt = null;
         String endOfStudyId = StringUtils.substring(UUID.randomUUID().toString(), 0, 6);
@@ -82,15 +82,13 @@ public class DataAccess {
             if (userExists) {
                 sql = "UPDATE user_data"
                         + " SET number_apps = " + numberOfApps
-                        +", random_id = " + randomID
                         +", os_version = '" + osVersion
                         +"', sdk_version = '" + sdkVersion
                         +"', phone_model = '" + phoneModel
                         + "' WHERE device_id = \"" + userId + "\";";
             } else {
-                sql = "INSERT INTO user_data (device_id, number_apps, random_id, end_of_study_id, os_version, sdk_version, phone_model) "
-                        + "VALUES (\"" + userId + "\", " + numberOfApps + ", \"" + randomID 
-                        + "\", \"" + endOfStudyId + "\", \"" + osVersion + "\", \"" + sdkVersion + "\", \"" + phoneModel + "\");";
+                sql = "INSERT INTO user_data (device_id, number_apps, end_of_study_id, os_version, sdk_version, phone_model) "
+                        + "VALUES (\"" + userId + "\", " + numberOfApps + ", \"" + endOfStudyId + "\", \"" + osVersion + "\", \"" + sdkVersion + "\", \"" + phoneModel + "\");";
                 
             }
             stmt.executeUpdate(sql);
@@ -218,7 +216,6 @@ public class DataAccess {
                 user.setEmail(result.getString(3));
                 user.setAppGroup(result.getInt(4));
                 user.setSecondStage(result.getBoolean(7));
-                user.setRandomID(result.getString(8));
                 user.setEndOfStudy(result.getString(9));
                 user.setLabellingCount(result.getInt(12));
                 
