@@ -424,8 +424,18 @@ public class DataQualityProcessor
         } 
     }
     
-    public static String getDeviceIdFromName(String fileName, int startIndex) {
-        return StringUtils.substring(fileName, startIndex, startIndex+16);
+    public static String getDeviceIdFromName(String fileName) {
+
+        //error_e2ca25038246da18
+        //labeled_data_eacf84949b4dcaf2
+        //installed_apps_eacf84949b4dcaf2
+
+        String[] sp = fileName.split("_");
+        if(sp.length >= 3) {
+            return fileName.startsWith("error") ? sp[1] : sp[2];
+        }
+
+        return null;
     }
     
 }

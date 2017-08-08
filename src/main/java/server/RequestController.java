@@ -43,7 +43,7 @@ public class RequestController {
 
         if (!file.isEmpty()) {
             try {
-                String deviceId = DataQualityProcessor.getDeviceIdFromName(name, 13);
+                String deviceId = DataQualityProcessor.getDeviceIdFromName(name);
                 boolean secondStage = DataAccess.getStageWithDeviceId(deviceId);
                 if (name.contains("labeled_data") && !secondStage) {
                     name = StringUtils.left(name, StringUtils.indexOf(name, ".csv")).concat("_first_stage.csv");
@@ -61,7 +61,7 @@ public class RequestController {
                 } else if (name.contains("labeled_data")) {
 
                     // Data quality check for labeled data
-                    DataAccess.insertNewLabelledFile(name, DataQualityProcessor.getDeviceIdFromName(name, 13), "not yet checked", secondStage);
+                    DataAccess.insertNewLabelledFile(name, DataQualityProcessor.getDeviceIdFromName(name), "not yet checked", secondStage);
                     new DataQualityProcessor(filePath, name).checkLabeledDataFile();
 
                     //update labelling count

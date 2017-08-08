@@ -78,7 +78,7 @@ public class RequestControllerUtil {
         int numberOfLabellings = countLabels(filePath, fileName);
         if (numberOfLabellings > 0) {
             // Extract deviceId
-            String deviceId = DataQualityProcessor.getDeviceIdFromName(fileName, 15);
+            String deviceId = DataQualityProcessor.getDeviceIdFromName(fileName);
             DataAccess.updateLabellingCount(deviceId, numberOfLabellings);
         }
 
@@ -135,7 +135,7 @@ public class RequestControllerUtil {
         int numberOfApps = installedApps.length;
 
         // Extract deviceId
-        String deviceId = DataQualityProcessor.getDeviceIdFromName(fileName, 15);
+        String deviceId = DataQualityProcessor.getDeviceIdFromName(fileName);
 
         DataAccess.insertNewUser(deviceId, numberOfApps, osVersion, sdkVersion, phoneModel);
     }
