@@ -98,7 +98,7 @@ public class RequestControllerUtil {
         try (Stream<String> stream = Files.lines(Paths.get(file.getAbsolutePath()))) {
 
             stream.forEach(elem -> {
-                if (elem.contains("CONTEXT_SENSOR_LABELLING")) {
+                if (elem.contains("CONTEXT_SENSOR_LABELLING") && elem.contains(";usage;") && !elem.contains(";UNKNOWN")) {
                     labelledLines.add(elem);
                 }
             });
@@ -107,7 +107,7 @@ public class RequestControllerUtil {
             e.printStackTrace();
         }
 
-        return labelledLines.size() > 0 ? labelledLines.size() / 3 : 0;
+        return labelledLines.size();
 
     }
 
