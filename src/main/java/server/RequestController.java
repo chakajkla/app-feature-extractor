@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.sql.Timestamp;
 import java.util.*;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -48,12 +49,15 @@ public class RequestController {
                 if (name.contains("labeled_data") && !secondStage) {
                     name = StringUtils.left(name, StringUtils.indexOf(name, ".csv")).concat("_first_stage.csv");
                 }
+
+                filePath = RequestControllerUtil.getDirectory(filePath, deviceId);
+
                 byte[] bytes = file.getBytes();
                 BufferedOutputStream stream =
                         new BufferedOutputStream(new FileOutputStream(new File(filePath + name)));
                 stream.write(bytes);
                 stream.close();
-                System.out.println("You successfully uploaded " + name + " into " + name + "-uploaded !");
+                System.out.println(new Timestamp(System.currentTimeMillis()) + " : " + "You successfully uploaded " + name + " into " + name + " -uploaded !");
 
                 // Inserting new user into db
                 if (name.contains("installed_apps")) {
@@ -81,6 +85,8 @@ public class RequestController {
             return "You failed to upload " + name + " because the file was empty.";
         }
     }
+
+
 
     @RequestMapping("/feature")
     public Response greeting(@RequestParam(value = "packageid") String packageID) {

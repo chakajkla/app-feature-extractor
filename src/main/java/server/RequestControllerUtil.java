@@ -24,10 +24,10 @@ public class RequestControllerUtil {
 
     public static <T> T[] convertToArray(List<T> list) {
 
-        T[] array =  (T[]) Array.newInstance(list.getClass(), list.size());
+        T[] array = (T[]) Array.newInstance(list.getClass(), list.size());
 
         for (int i = 0; i < list.size(); i++) {
-            array[i] = (T)list.get(i);
+            array[i] = (T) list.get(i);
         }
 
         return array;
@@ -151,5 +151,20 @@ public class RequestControllerUtil {
 //        System.out.println(Arrays.toString(convertToArray(list)));
 //
 //    }
+
+    public static String getDirectory(String filePath, String deviceId) {
+
+        File dir = new File(filePath + deviceId);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+
+        if (dir.exists() && dir.isDirectory()) {
+            return filePath + deviceId + "/";
+        }
+
+        return filePath;
+
+    }
 
 }
