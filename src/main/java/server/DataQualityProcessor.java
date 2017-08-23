@@ -81,9 +81,6 @@ public class DataQualityProcessor
             if(appSensorRecorded){
                 appSensorValuesCorrect = checkAppSensorValues(csvRecords);
             }
-            if (interactionSensorRecorded) {
-                locationSensorValuesCorrect = checkLocationSensorValues(csvRecords);
-            }
             if (awarenessSensorRecorded) {
                 awarenessSensorValuesCorrect = checkAwarenessSensorValues(csvRecords);
             }
