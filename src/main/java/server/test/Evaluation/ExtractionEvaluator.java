@@ -1,12 +1,7 @@
 package server.test.Evaluation;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import edu.mit.jwi.Dictionary;
-import edu.mit.jwi.IDictionary;
-import edu.mit.jwi.item.IIndexWord;
-import edu.mit.jwi.item.POS;
-import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import server.FeatureProcessor;
+import server.log.LogUtil;
 import server.nlp.FeatureParser;
 import server.nlp.NLPUtil;
 import server.objects.AppFeatureDataPoint;
@@ -14,7 +9,6 @@ import server.objects.AppFeatureDescriptor;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
