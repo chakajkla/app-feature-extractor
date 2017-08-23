@@ -1,5 +1,10 @@
 package server.test;
 
+import server.FeatureProcessor;
+import server.log.LogUtil;
+import server.objects.AppFeatureDataPoint;
+import server.objects.AppFeatureDescriptor;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -9,12 +14,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import server.FeatureProcessor;
-import server.nlp.FeatureParser;
-import server.objects.AppFeatureDataPoint;
-import server.objects.AppFeatureDescriptor;
-
-import static server.nlp.FeatureParser.applyScoreFilter;
 import static server.nlp.FeatureParser.applyScoreNormalization;
 
 public class FeatureBuild {
@@ -55,7 +54,7 @@ public class FeatureBuild {
         Collections.sort(felist,comp);
 
         for (AppFeatureDataPoint fe : felist) {
-            System.out.println(fe.toString() + " " + fe.getScore());
+            LogUtil.log(fe.toString() + " " + fe.getScore());
         }
 
     }
@@ -70,7 +69,7 @@ public class FeatureBuild {
 
             int ct = 1;
             for (String id : ids) {
-                System.out.println("building features for " + id + " " + ct
+                LogUtil.log("building features for " + id + " " + ct
                         + "/" + ids.size());
                 FeatureProcessor.getAppFeatures(id);
                 ct++;

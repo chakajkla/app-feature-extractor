@@ -3,6 +3,7 @@ package server.nlp;
 import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.IDictionary;
 import edu.mit.jwi.item.*;
+import server.log.LogUtil;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -194,10 +195,10 @@ public class WordNet {
             String w1 = synset1.getWords().get(0).getLemma();
             String w2 = synset2.getWords().get(0).getLemma();
             String w3 = ccp.getWords().get(0).getLemma();
-            System.out.println("maxDepth(" + w1 + "): " + maxDepth(synset1));
-            System.out.println("maxDepth(" + w2 + "): " + maxDepth(synset2));
-            System.out.println("maxDepth(" + w3 + "): " + maxDepth(ccp));
-            System.out.println("distance(" + w1 + "," + w2 + "): " + distance);
+            LogUtil.log("maxDepth(" + w1 + "): " + maxDepth(synset1));
+            LogUtil.log("maxDepth(" + w2 + "): " + maxDepth(synset2));
+            LogUtil.log("maxDepth(" + w3 + "): " + maxDepth(ccp));
+            LogUtil.log("distance(" + w1 + "," + w2 + "): " + distance);
         }
         return distance;
     }
@@ -359,7 +360,7 @@ public class WordNet {
     public static void main3(String[] args) {
 //        double score = calculateSemanticSimilarity("compose new email","create new email");
 //        //score = calculateSemanticSimilarity("add image","delete image");
-//        System.out.println(score);
+//        LogUtil.log(score);
 
 
         IIndexWord idxWordNoun = dict.getIndexWord("dog", POS.NOUN);
@@ -371,8 +372,8 @@ public class WordNet {
                 IWordID wordID1 = ite.next();
                 IWord word = dict.getWord(wordID1);
                 ISynset synset = word.getSynset();
-                System.out.println(synset);
-                //System.out.println(synset.getRelatedSynsets());
+                LogUtil.log(synset.toString());
+                //LogUtil.log(synset.getRelatedSynsets());
             }
 
         }

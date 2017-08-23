@@ -5,21 +5,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import server.database.DataAccess;
+import server.log.LogUtil;
+import server.objects.AppFeatureDataPoint;
+import server.objects.AppFeatureDescriptor;
+import server.objects.request.App;
+import server.objects.response.Feature;
+import server.objects.response.Response;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.sql.Timestamp;
-import java.util.*;
-
-import org.springframework.web.multipart.MultipartFile;
-
-import server.database.DataAccess;
-import server.objects.AppFeatureDescriptor;
-import server.objects.AppFeatureDataPoint;
-import server.objects.request.App;
-import server.objects.response.Feature;
-import server.objects.response.Response;
+import java.util.HashSet;
+import java.util.Set;
 
 @RestController
 public class RequestController {
@@ -57,7 +56,7 @@ public class RequestController {
                         new BufferedOutputStream(new FileOutputStream(new File(filePath + name)));
                 stream.write(bytes);
                 stream.close();
-                System.out.println(new Timestamp(System.currentTimeMillis()) + " : " + "You successfully uploaded " + name + " into " + name + " -uploaded !");
+                LogUtil.log("You successfully uploaded " + name + " into " + name + " -uploaded !");
 
                 // Inserting new user into db
                 if (name.contains("installed_apps")) {
@@ -93,7 +92,7 @@ public class RequestController {
 
         packageID = packageID.trim();
 
-        System.out.println("Searching features for..." + packageID);
+        LogUtil.log("Searching features for..." + packageID);
 
         AppFeatureDescriptor featurelist = FeatureProcessor.getAppFeatures(packageID);
 
@@ -189,7 +188,7 @@ public class RequestController {
 
         String packageID = app.getId().trim();
 
-        System.out.println("Ranking features for..." + packageID + " " + app.getFeatureVector().toString());
+        LogUtil.log("Ranking features for..." + packageID + " " + app.getFeatureVector().toString());
 
 //        Map<String, Float> rankedMap = TensorflowUtil.getFeaturesScore(packageID,  RequestControllerUtil.convertToArray(app.getFeatureVector()));
 //

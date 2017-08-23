@@ -7,7 +7,6 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
-import java.util.Properties;
 
 public class SentimentAnalysisTest {
 
@@ -19,10 +18,10 @@ public class SentimentAnalysisTest {
 //        props.setProperty("annotators", "tokenize, ssplit, parse, sentiment");
 //        pipeline = new StanfordCoreNLP(props);
 //
-//        System.out.println(analyzeSentiment("creates stress"));
-//        System.out.println(analyzeSentiment("work better"));
-//        System.out.println(analyzeSentiment("get information"));
-//        System.out.println(analyzeSentiment("check battery"));
+//        LogUtil.log(analyzeSentiment("creates stress"));
+//        LogUtil.log(analyzeSentiment("work better"));
+//        LogUtil.log(analyzeSentiment("get information"));
+//        LogUtil.log(analyzeSentiment("check battery"));
 //
 //    }
 

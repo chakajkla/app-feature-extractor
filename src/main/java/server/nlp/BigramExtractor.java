@@ -1,11 +1,11 @@
 package server.nlp;
 
+import server.objects.Bigram;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import server.objects.Bigram;
 
 public class BigramExtractor {
 
@@ -34,7 +34,7 @@ public class BigramExtractor {
             String[] taggedTokens = taggedString.split("\\s+");
             String[] tokens = sentence.split("\\s+");
 
-            // System.out.println(Arrays.toString(tokens));
+            // LogUtil.log(Arrays.toString(tokens));
 
             for (int i = 0; i < tokens.length; i++) {
 

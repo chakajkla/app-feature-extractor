@@ -1,17 +1,5 @@
 package server.nlp;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.net.URL;
-import java.util.*;
-import java.util.regex.Pattern;
-
-import server.nlp.IndexBuilder.TYPE;
-import server.nlp.featureCluster.FeatureGroup;
-import server.objects.AppFeatureDataPoint;
-import server.objects.AppFeatureDescriptor;
-import server.objects.Bigram;
 import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.IDictionary;
 import edu.mit.jwi.item.IIndexWord;
@@ -23,6 +11,19 @@ import edu.stanford.nlp.process.DocumentPreprocessor;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import edu.stanford.nlp.trees.GrammaticalStructure;
 import edu.stanford.nlp.trees.TypedDependency;
+import server.log.LogUtil;
+import server.nlp.IndexBuilder.TYPE;
+import server.nlp.featureCluster.FeatureGroup;
+import server.objects.AppFeatureDataPoint;
+import server.objects.AppFeatureDescriptor;
+import server.objects.Bigram;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.net.URL;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class FeatureParser {
 
@@ -43,7 +44,7 @@ public class FeatureParser {
 
         Collections.shuffle(allFeatures);
 
-        System.out.println("Number of features before filter: " + allFeatures.size());
+        LogUtil.log("Number of features before filter: " + allFeatures.size());
 
 
         Collections.sort(allFeatures);
@@ -54,7 +55,7 @@ public class FeatureParser {
             av += fe.getScore();
         }
         av /= (double) allFeatures.size();
-        System.out.println("Average score = " + av);
+        LogUtil.log("Average score = " + av);
         ArrayList<AppFeatureDataPoint> newFeatures = new ArrayList<>();
         for (int i = 0; i < allFeatures.size(); i++) {
             AppFeatureDataPoint fe = allFeatures.get(i);
@@ -65,12 +66,12 @@ public class FeatureParser {
         allFeatures.clear();
         allFeatures.addAll(newFeatures);
 
-        System.out.println("Number of features before reduction: " + allFeatures.size());
+        LogUtil.log("Number of features before reduction: " + allFeatures.size());
 
 
         ArrayList<FeatureGroup> clusterList = new ArrayList<>();
         while (!allFeatures.isEmpty()) {
-            // System.out.println(allFeatures.size());
+            // LogUtil.log(allFeatures.size());
             // remove first feature
             AppFeatureDataPoint fea = allFeatures.remove(0);
             FeatureGroup fg = new FeatureGroup();
@@ -133,7 +134,7 @@ public class FeatureParser {
 //
 //				// if (!dp.toString().equals(
 //				// featureReducedMap.get(dp.getUniqueName()).toString()))
-//				// System.out.println(dp.toString()
+//				// LogUtil.log(dp.toString()
 //				// + " __ "
 //				// + featureReducedMap.get(dp.getUniqueName())
 //				// .toString() + " __ " + dp.getUniqueName());
@@ -202,7 +203,7 @@ public class FeatureParser {
                     e.printStackTrace();
                     indexScore = 0;
                 }
-                // System.out.println(status + "__" + tagged
+                // LogUtil.log(status + "__" + tagged
                 // + "  __ NGramScore: " + NgramScore
                 // + " __ IndexScore: " + indexScore);
 
@@ -298,7 +299,7 @@ public class FeatureParser {
             for (TypedDependency dp : gs.allTypedDependencies()) {
 
                 if (dp.toString().contains("neg(")) {
-                    // System.out.println(dp.toString());
+                    // LogUtil.log(dp.toString());
 
                     badVerbs.add(dp.toString().substring(4,
                             dp.toString().indexOf(",") - 2));
@@ -307,7 +308,7 @@ public class FeatureParser {
 
         }
 
-        // System.out.println(badVerbs.toString());
+        // LogUtil.log(badVerbs.toString());
         return badVerbs;
     }
 
@@ -318,20 +319,20 @@ public class FeatureParser {
             HasWord w = sentence.get(i);
             String newWord = NLPUtil.removeNonCharacters(w.toString()
                     .toLowerCase());
-            // System.out.println(w.toString().toLowerCase() + " __ " +
+            // LogUtil.log(w.toString().toLowerCase() + " __ " +
             // newWord);
             Pattern p = Pattern.compile("[^a-z]");
             boolean hasSpecialChar = p.matcher(w.toString()).find();
 
             if (!newWord.equals("") && newWord.length() >= 2 && !hasSpecialChar) {
-                // System.out.println(newWord);
+                // LogUtil.log(newWord);
                 w.setWord(newWord);
                 processList.add(w);
             }
 
         }
 
-        // System.out.println(processList);
+        // LogUtil.log(processList);
 
         return processList;
     }
@@ -458,7 +459,7 @@ public class FeatureParser {
             tfscore[i] = dp.getTfScore();
             ngramscore[i] = dp.getNgramScore();
             nnCtscore[i] = dp.getNnFreqScoreScore();
-            // System.out.println(dp.toString() + "\n\n");
+            // LogUtil.log(dp.toString() + "\n\n");
 
         }
 
@@ -474,7 +475,7 @@ public class FeatureParser {
             dp.setNgramScore(ngramscore[i]);
             dp.setNnFreqScore(nnCtscore[i]);
 
-            // System.out.println(dp.toString() + "\n");
+            // LogUtil.log(dp.toString() + "\n");
 
         }
 

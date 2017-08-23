@@ -37,7 +37,7 @@ public class FeatureProcessor {
 
         /*if (!containDB && !containOffline) {
 
-            System.out.println("Features for " + packageID + " not found...building new features");
+            LogUtil.log("Features for " + packageID + " not found...building new features");
 
             // if not crawl it
             AndroidApp app = PlayStoreAppPageCrawler.crawlAppPages(packageID);
@@ -47,7 +47,7 @@ public class FeatureProcessor {
                 String name = app.getPackageName();
                 String description = app.getDescription();
 
-                System.out.println(name + " __ " + description);
+                LogUtil.log(name + " __ " + description);
 
                 featurelist = extractFeatures(name, description);
 
@@ -71,7 +71,7 @@ public class FeatureProcessor {
             featurelist = buildOfflineFeatureList(packageID);
 
         } /*else {
-            System.out.println("Found features for " + packageID);
+            LogUtil.log("Found features for " + packageID);
             featurelist = DataAccess.getFeatures(packageID);
 
 
@@ -219,7 +219,7 @@ public class FeatureProcessor {
                 .preprocessString(description);
         String processed_desc = NLPUtil.assembleString(tokenizedString);
 
-        System.out.println("Processed desc : " + processed_desc);
+        LogUtil.log("Processed desc : " + processed_desc);
 
         // update Lucene index
         IndexBuilder.addIndex(processed_desc, name, TYPE.android);

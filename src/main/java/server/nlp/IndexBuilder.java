@@ -1,7 +1,5 @@
 package server.nlp;
 
-import java.io.File;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -13,17 +11,14 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
+import server.log.LogUtil;
+
+import java.io.File;
 
 public class IndexBuilder {
 
@@ -68,13 +63,13 @@ public class IndexBuilder {
 
             if (scoreDocs.length == 1) {
 
-                System.out.println(searcher.doc(scoreDocs[0].doc).get("name")
+                LogUtil.log(searcher.doc(scoreDocs[0].doc).get("name")
                         + "  found index..deleting it");
                 iwriter.deleteDocuments(nameFilter);
 
             }
 
-            System.out.println("Updating index...." + name);
+            LogUtil.log("Updating index...." + name);
 
             // Store the index in file
 
@@ -130,8 +125,8 @@ public class IndexBuilder {
 
         TopDocs hits = searcher.search(booleanQuery, maxHits);
         ScoreDoc[] scoreDocs = hits.scoreDocs;
-        // System.out.println("hits=" + scoreDocs.length);
-        // System.out.println("Hits (rank,score,docId)");
+        // LogUtil.log("hits=" + scoreDocs.length);
+        // LogUtil.log("Hits (rank,score,docId)");
 
         if (scoreDocs.length >= 1) {
             for (int i = 0; i < scoreDocs.length; i++) {
@@ -141,7 +136,7 @@ public class IndexBuilder {
             score /= (double) scoreDocs.length;
         } else {
 
-            System.out.println(name + "  __  " + query + " __ length : "
+            LogUtil.log(name + "  __  " + query + " __ length : "
                     + scoreDocs.length);
             throw new Exception("query not found impossible!");
         }

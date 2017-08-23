@@ -3,16 +3,16 @@
  */
 package server;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.List;
-
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
-
 import server.database.DataAccess;
+import server.log.LogUtil;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * @author niessen
@@ -103,7 +103,7 @@ public class DataQualityProcessor
                 locationSensorValuesCorrect = checkLocationSensorValues(csvRecords);
             }
         } catch(Exception e) {
-            System.out.println("Error in CsvFileReader !!!");
+            LogUtil.log("Error in CsvFileReader !!!");
             e.printStackTrace();
             DataAccess.updateLabelledFile(fileName, 3, "Error while reading file");
         } finally {
@@ -115,7 +115,7 @@ public class DataQualityProcessor
                     csvFileParser.close();
                 }
             } catch (IOException e) {
-                System.out.println("Error while closing fileReader/csvFileParser !!!");
+                LogUtil.log("Error while closing fileReader/csvFileParser !!!");
                 e.printStackTrace();
             }
         }

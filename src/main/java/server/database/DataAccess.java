@@ -1,24 +1,14 @@
 package server.database;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import org.apache.commons.lang3.StringUtils;
+import server.log.LogUtil;
+import server.nlp.NLPUtil;
+import server.objects.*;
+
+import java.sql.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-
-import org.apache.commons.lang3.StringUtils;
-
-import server.nlp.NLPUtil;
-
-import server.objects.AndroidApp;
-import server.objects.AppFeatureDataPoint;
-import server.objects.AppFeatureDescriptor;
-import server.objects.PathStorage;
-import server.objects.User;
 
 public class DataAccess {
 
@@ -31,7 +21,7 @@ public class DataAccess {
             c = DriverManager.getConnection("jdbc:sqlite:"
                     + PathStorage.databasePath);
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully");
+            LogUtil.log("Opened database successfully");
 
             stmt = c.createStatement();
 
@@ -41,7 +31,7 @@ public class DataAccess {
                     + "VALUES (\"" + app.getPackageName() + "\", \"" + desc
                     + "\" );";
 
-            // System.out.println(sql);
+            // LogUtil.log(sql);
             stmt.executeUpdate(sql);
             c.commit();
             c.close();
@@ -50,7 +40,7 @@ public class DataAccess {
 
             return false;
         }
-        System.out.println("Insert Operation done successfully");
+        LogUtil.log("Insert Operation done successfully");
 
         return true;
 
@@ -66,7 +56,7 @@ public class DataAccess {
             c = DriverManager.getConnection("jdbc:sqlite:"
                     + PathStorage.databasePath);
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully");
+            LogUtil.log("Opened database successfully");
 
             stmt = c.createStatement();
             
@@ -107,7 +97,7 @@ public class DataAccess {
             }
             return false;
         }
-        System.out.println("Insert Operation done successfully");
+        LogUtil.log("Insert Operation done successfully");
 
         return true;
     }
@@ -120,7 +110,7 @@ public class DataAccess {
             c = DriverManager.getConnection("jdbc:sqlite:"
                     + PathStorage.databasePath);
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully");
+            LogUtil.log("Opened database successfully");
 
             stmt = c.createStatement();
             
@@ -145,7 +135,7 @@ public class DataAccess {
             }
             return false;
         }
-        System.out.println("Update Operation done successfully");
+        LogUtil.log("Update Operation done successfully");
 
         return true;
     }
@@ -162,7 +152,7 @@ public class DataAccess {
             c = DriverManager.getConnection("jdbc:sqlite:"
                     + PathStorage.databasePath);
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully");
+            LogUtil.log("Opened database successfully");
 
             stmt = c.createStatement();
 
@@ -186,7 +176,7 @@ public class DataAccess {
             }
             return false;
         }
-        System.out.println("Update Operation done successfully");
+        LogUtil.log("Update Operation done successfully");
 
         return true;
     }
@@ -201,7 +191,7 @@ public class DataAccess {
             c = DriverManager.getConnection("jdbc:sqlite:"
                     + PathStorage.databasePath);
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully");
+            LogUtil.log("Opened database successfully");
 
             stmt = c.createStatement();
 
@@ -239,7 +229,7 @@ public class DataAccess {
         }
         
         
-        System.out.println("Select Operation done successfully");
+        LogUtil.log("Select Operation done successfully");
         return userList;
     }
 
@@ -293,7 +283,7 @@ public class DataAccess {
             c = DriverManager.getConnection("jdbc:sqlite:"
                     + PathStorage.databasePath);
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully");
+            LogUtil.log("Opened database successfully");
 
             stmt = c.createStatement();
 
@@ -324,7 +314,7 @@ public class DataAccess {
         }
         
         
-        System.out.println("Select Operation done successfully");
+        LogUtil.log("Select Operation done successfully");
         return endOfStudyId;
     }
     
@@ -338,7 +328,7 @@ public class DataAccess {
             c = DriverManager.getConnection("jdbc:sqlite:"
                     + PathStorage.databasePath);
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully");
+            LogUtil.log("Opened database successfully");
 
             stmt = c.createStatement();
 
@@ -369,7 +359,7 @@ public class DataAccess {
         }
         
         
-        System.out.println("Select Operation done successfully");
+        LogUtil.log("Select Operation done successfully");
         return apps;
     }
     
@@ -383,7 +373,7 @@ public class DataAccess {
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:"
                     + PathStorage.databasePath);
-            System.out.println("Opened database successfully");
+            LogUtil.log("Opened database successfully");
 
             stmt = c.createStatement();
 
@@ -416,7 +406,7 @@ public class DataAccess {
         
         if (appGroup != null) {
             assignedApps = getAppsFromAppGroupsWithId(appGroup);
-            System.out.println("Select Operation done successfully");
+            LogUtil.log("Select Operation done successfully");
         }
         
         return assignedApps;
@@ -432,7 +422,7 @@ public class DataAccess {
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:"
                     + PathStorage.databasePath);
-            System.out.println("Opened database successfully");
+            LogUtil.log("Opened database successfully");
 
             stmt = c.createStatement();
 
@@ -465,7 +455,7 @@ public class DataAccess {
         
         if (appGroup != null) {
             assignedApps = getAppNamesFromAppGroupsWithId(appGroup);
-            System.out.println("Select Operation done successfully");
+            LogUtil.log("Select Operation done successfully");
         }
         
         return assignedApps;
@@ -481,7 +471,7 @@ public class DataAccess {
             c = DriverManager.getConnection("jdbc:sqlite:"
                     + PathStorage.databasePath);
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully");
+            LogUtil.log("Opened database successfully");
 
             stmt = c.createStatement();
 
@@ -512,7 +502,7 @@ public class DataAccess {
         }
         
         
-        System.out.println("Select Operation done successfully");
+        LogUtil.log("Select Operation done successfully");
         return apps;
     }
     
@@ -526,7 +516,7 @@ public class DataAccess {
             c = DriverManager.getConnection("jdbc:sqlite:"
                     + PathStorage.databasePath);
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully");
+            LogUtil.log("Opened database successfully");
 
             stmt = c.createStatement();
 
@@ -557,7 +547,7 @@ public class DataAccess {
         }
         
         
-        System.out.println("Select Operation done successfully");
+        LogUtil.log("Select Operation done successfully");
         return apps;
     }
     
@@ -569,7 +559,7 @@ public class DataAccess {
             c = DriverManager.getConnection("jdbc:sqlite:"
                     + PathStorage.databasePath);
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully");
+            LogUtil.log("Opened database successfully");
 
             stmt = c.createStatement();
 
@@ -593,7 +583,7 @@ public class DataAccess {
 
             return false;
         }
-        System.out.println("Insert Operation done successfully");
+        LogUtil.log("Insert Operation done successfully");
 
         return true;
     }
@@ -606,7 +596,7 @@ public class DataAccess {
             c = DriverManager.getConnection("jdbc:sqlite:"
                     + PathStorage.databasePath);
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully");
+            LogUtil.log("Opened database successfully");
 
             stmt = c.createStatement();
 
@@ -631,7 +621,7 @@ public class DataAccess {
 
             return false;
         }
-        System.out.println("Update Operation done successfully");
+        LogUtil.log("Update Operation done successfully");
 
         return true;
     }
@@ -646,7 +636,7 @@ public class DataAccess {
             c = DriverManager.getConnection("jdbc:sqlite:"
                     + PathStorage.databasePath);
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully");
+            LogUtil.log("Opened database successfully");
 
             stmt = c.createStatement();
             ResultSet rs = stmt
@@ -667,7 +657,7 @@ public class DataAccess {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
-        System.out.println("Select Operation done successfully");
+        LogUtil.log("Select Operation done successfully");
         return ap;
 
     }
@@ -683,7 +673,7 @@ public class DataAccess {
             c = DriverManager.getConnection("jdbc:sqlite:"
                     + PathStorage.databasePath);
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully");
+            LogUtil.log("Opened database successfully");
 
             stmt = c.createStatement();
             ResultSet rs = stmt
@@ -699,7 +689,7 @@ public class DataAccess {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
-        System.out.println("Check Operation done successfully");
+        LogUtil.log("Check Operation done successfully");
 
         if (contain == 1) {
             return true;
@@ -721,7 +711,7 @@ public class DataAccess {
             c = DriverManager.getConnection("jdbc:sqlite:"
                     + PathStorage.databasePath);
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully");
+            LogUtil.log("Opened database successfully");
 
             stmt = c.createStatement();
 
@@ -749,7 +739,7 @@ public class DataAccess {
                         + ", "
                         + dp.getTfScore() + " " + ");";
 
-                // System.out.println(sql);
+                // LogUtil.log(sql);
                 stmt.executeUpdate(sql);
                 c.commit();
 
@@ -759,7 +749,7 @@ public class DataAccess {
             e.printStackTrace();
 
         }
-        System.out.println("Insert Operation done successfully");
+        LogUtil.log("Insert Operation done successfully");
 
     }
 
@@ -778,7 +768,7 @@ public class DataAccess {
             c = DriverManager.getConnection("jdbc:sqlite:"
                     + PathStorage.databasePath);
             c.setAutoCommit(false);
-            //System.out.println("Opened database successfully");
+            //LogUtil.log("Opened database successfully");
 
             stmt = c.createStatement();
             ResultSet rs = stmt
@@ -806,7 +796,7 @@ public class DataAccess {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
-        System.out.println("Read features successfully__Total : " + featureCount);
+        LogUtil.log("Read features successfully__Total : " + featureCount);
 
         return ap;
     }
@@ -821,7 +811,7 @@ public class DataAccess {
             c = DriverManager.getConnection("jdbc:sqlite:"
                     + PathStorage.databasePath);
             c.setAutoCommit(false);
-            //System.out.println("Searching coloc score...");
+            //LogUtil.log("Searching coloc score...");
 
             stmt = c.createStatement();
             ResultSet rs = stmt

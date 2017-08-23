@@ -55,13 +55,13 @@ public class ExtractionEvaluator {
                     String[] sp = feature.split("\\s");
                     if (sp.length == 2) {
                         AppFeatureDataPoint af = new AppFeatureDataPoint();
-                        System.out.println(feature);
+                        LogUtil.log(feature);
                         af.setVerb(sp[0]);
                         af.setNoun(sp[1]);
                         goldenList.add(af);
                     } else {
                         AppFeatureDataPoint af = new AppFeatureDataPoint();
-                        System.out.println(feature);
+                        LogUtil.log(feature);
                         af.setVerb(sp[0]);
                         af.setNoun("thing");
                         goldenList.add(af);
@@ -73,7 +73,7 @@ public class ExtractionEvaluator {
                 ap = applyScoreNormalization(ap);
                 ArrayList<AppFeatureDataPoint> scoredList = new ArrayList<>();
                 for (AppFeatureDataPoint fe : ap.getFunctionList()) {
-                    System.out.println(fe.toString() + " " + fe.getScore());
+                    LogUtil.log(fe.toString() + " " + fe.getScore());
                     //0.20 24 , 41
                     if (fe.getScore() >= threshold) {
                         scoredList.add(fe);
@@ -83,8 +83,8 @@ public class ExtractionEvaluator {
                 double localPrec = calculatePrecision(scoredList, goldenList);;
                 double localRec = calculateRecall(scoredList, goldenList);
 
-                System.out.println("local prec + " + localPrec);
-                System.out.println("local rec + " + localRec);
+                LogUtil.log("local prec + " + localPrec);
+                LogUtil.log("local rec + " + localRec);
 
                 global_prec += localPrec;
                 global_rec += localRec;
@@ -93,8 +93,8 @@ public class ExtractionEvaluator {
 
         }
 
-        System.out.println("Precision "+threshold+" : " + global_prec / global_ct);
-        System.out.println("Recall "+threshold+" : " + global_rec / global_ct);
+        LogUtil.log("Precision "+threshold+" : " + global_prec / global_ct);
+        LogUtil.log("Recall "+threshold+" : " + global_rec / global_ct);
 
     }
 
@@ -150,19 +150,19 @@ public class ExtractionEvaluator {
 
 
         String tagged = FeatureParser.tagString("turn off");
-        System.out.println(tagged);
+        LogUtil.log(tagged);
         tagged = FeatureParser.tagString("pick on");
-        System.out.println(tagged);
+        LogUtil.log(tagged);
         tagged = FeatureParser.tagString("dial down");
-        System.out.println(tagged);
+        LogUtil.log(tagged);
         tagged = FeatureParser.tagString("turn on");
-        System.out.println(tagged);
+        LogUtil.log(tagged);
         tagged = FeatureParser.tagString("service for watching TV episodes");
-        System.out.println(tagged);
+        LogUtil.log(tagged);
         tagged = FeatureParser.tagString("rate tv");
-        System.out.println(tagged);
+        LogUtil.log(tagged);
         tagged = FeatureParser.tagString("Share updates, photos and videos");
-        System.out.println(tagged);
+        LogUtil.log(tagged);
 //
 //        String path = "data" + File.separator + "dict";
 //        URL url;
@@ -192,10 +192,10 @@ public class ExtractionEvaluator {
 //        }
 
         tagged = FeatureParser.tagString("You won’t need to delete messages to save space.");
-        System.out.println(tagged);
+        LogUtil.log(tagged);
 
         tagged = FeatureParser.tagString("you don't need to pay for every message");
-        System.out.println(tagged);
+        LogUtil.log(tagged);
     }
 
     public static boolean checkSimilarity(AppFeatureDataPoint fe1, AppFeatureDataPoint fe2) {

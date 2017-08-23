@@ -148,7 +148,7 @@ public class RequestControllerUtil {
 //        list.add(2.34f);
 //        list.add(3.45f);
 //
-//        System.out.println(Arrays.toString(convertToArray(list)));
+//        LogUtil.log(Arrays.toString(convertToArray(list)));
 //
 //    }
 

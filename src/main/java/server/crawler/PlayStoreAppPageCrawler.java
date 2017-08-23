@@ -1,9 +1,9 @@
 package server.crawler;
 
-import server.objects.AndroidApp;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import server.log.LogUtil;
+import server.objects.AndroidApp;
 
 import java.io.IOException;
 
@@ -84,18 +84,18 @@ public class PlayStoreAppPageCrawler {
 	}
 
 	public static void debug(AndroidApp app) {
-		System.out.println("------");
-		System.out.println("name:" + app.getName());
-		System.out.println("packageName:" + app.getPackageName());
-		System.out.println("category:" + app.getCategory());
-		System.out.println("price:" + app.getPrice());
-		System.out.println("description:" + app.getDescription());
-		System.out.println("starsCount:" + app.getStarsCount());
-		System.out.println("numDownloads:" + app.getDownloadNumber());
-		System.out.println("lastUpdatedDate:" + app.getLastUpdateDate());
-		System.out.println("developer:" + app.getDeveloper());
-		System.out.println("hasInAppPurchase:" + app.getHasInAppPurchase());
-		System.out.println("categoryLink:" + app.getCategoryLink());
-		System.out.println("------");
+		LogUtil.log("------");
+		LogUtil.log("name:" + app.getName());
+		LogUtil.log("packageName:" + app.getPackageName());
+		LogUtil.log("category:" + app.getCategory());
+		LogUtil.log("price:" + app.getPrice());
+		LogUtil.log("description:" + app.getDescription());
+		LogUtil.log("starsCount:" + app.getStarsCount());
+		LogUtil.log("numDownloads:" + app.getDownloadNumber());
+		LogUtil.log("lastUpdatedDate:" + app.getLastUpdateDate());
+		LogUtil.log("developer:" + app.getDeveloper());
+		LogUtil.log("hasInAppPurchase:" + app.getHasInAppPurchase());
+		LogUtil.log("categoryLink:" + app.getCategoryLink());
+		LogUtil.log("------");
 	}
 }
