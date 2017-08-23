@@ -1,6 +1,7 @@
 package server;
 
 import server.database.DataAccess;
+import server.log.LogUtil;
 import server.nlp.BigramExtractor;
 import server.nlp.FeatureParser;
 import server.nlp.IndexBuilder;
