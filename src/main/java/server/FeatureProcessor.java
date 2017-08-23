@@ -1,5 +1,16 @@
 package server;
 
+import server.database.DataAccess;
+import server.nlp.BigramExtractor;
+import server.nlp.FeatureParser;
+import server.nlp.IndexBuilder;
+import server.nlp.IndexBuilder.TYPE;
+import server.nlp.NLPUtil;
+import server.objects.AndroidApp;
+import server.objects.AppFeatureDataPoint;
+import server.objects.AppFeatureDescriptor;
+import server.objects.Bigram;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -14,18 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import server.nlp.BigramExtractor;
-import server.nlp.FeatureParser;
-import server.nlp.IndexBuilder;
-import server.nlp.IndexBuilder.TYPE;
-import server.nlp.NLPUtil;
-import server.objects.AndroidApp;
-import server.objects.AppFeatureDataPoint;
-import server.objects.AppFeatureDescriptor;
-import server.objects.Bigram;
-import server.crawler.PlayStoreAppPageCrawler;
-import server.database.DataAccess;
 
 public class FeatureProcessor {
 
@@ -89,6 +88,10 @@ public class FeatureProcessor {
 
     public static void appendPackageID(String packageID) {
 
+        if(containInCheckedList(packageID)){
+           return;
+        }
+
         Path FILE_PATH = Paths.get(missingPackageFilePath, "missing_packages.txt");
         List<String> packageIDs = new ArrayList<>();
         try (Stream<String> stream = Files.lines(FILE_PATH)) {
@@ -111,6 +114,27 @@ public class FeatureProcessor {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static boolean containInCheckedList(String packageID) {
+
+        Path FILE_PATH = Paths.get(missingPackageFilePath, "missing_packages_checked.txt");
+        List<String> packageIDs = new ArrayList<>();
+        try (Stream<String> stream = Files.lines(FILE_PATH)) {
+
+            packageIDs = stream.collect(Collectors.toList());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        HashSet<String> uniqueIDs = new HashSet<>();
+        uniqueIDs.addAll(packageIDs);
+
+        if (uniqueIDs.contains(packageID)) {
+            return true;
+        }
+
+        return false;
     }
 
     private static AppFeatureDescriptor buildOfflineFeatureList(String packageID) {
