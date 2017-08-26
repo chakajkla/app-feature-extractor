@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 public class LogUtil {
 
     public static void log(String message){
-        LogUtil.log(new Timestamp(System.currentTimeMillis()) + " : " + message);
+        System.out.println(new Timestamp(System.currentTimeMillis()) + " : " + message);
     }
 
 }
