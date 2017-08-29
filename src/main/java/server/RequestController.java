@@ -30,7 +30,8 @@ public class RequestController {
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "osVersion") String osVersion,
             @RequestParam(value = "sdkVersion") String sdkVersion,
-            @RequestParam(value = "phoneModel") String phoneModel) {
+            @RequestParam(value = "phoneModel") String phoneModel,
+            @RequestParam(value = "realDeviceId") String realDeviceId) {
         String name = file.getOriginalFilename();
         String filePath = "/home/vmadmin/data_storage/labeled_data/"; //default for labelled data
         if (name.contains("installed_apps")) {
@@ -60,7 +61,7 @@ public class RequestController {
 
                 // Inserting new user into db
                 if (name.contains("installed_apps")) {
-                    RequestControllerUtil.insertNewUserIntoDb(file, name, osVersion, sdkVersion, phoneModel);
+                    RequestControllerUtil.insertNewUserIntoDb(file, name, osVersion, sdkVersion, phoneModel, realDeviceId);
                 } else if (name.contains("labeled_data")) {
 
                     // Data quality check for labeled data
