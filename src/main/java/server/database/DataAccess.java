@@ -180,6 +180,45 @@ public class DataAccess {
 
         return true;
     }
+
+
+    public static boolean updateInvalidUser(String userId) {
+
+        Connection c = null;
+        Statement stmt;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:"
+                    + PathStorage.databasePath);
+            c.setAutoCommit(false);
+            LogUtil.log("Opened database successfully");
+
+            stmt = c.createStatement();
+
+            String sql = "UPDATE user_data"
+                    + " SET invalid = 1"
+                    + " WHERE device_id = \"" + userId + "\";";
+
+            stmt.executeUpdate(sql);
+            c.commit();
+            c.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            try
+            {
+                c.rollback();
+                c.close();
+            }
+            catch (SQLException e1)
+            {
+                e1.printStackTrace();
+            }
+            return false;
+        }
+        LogUtil.log("Update Operation done successfully");
+
+        return true;
+    }
     
     public static List<User> getAllUsers() {
         Connection c = null;

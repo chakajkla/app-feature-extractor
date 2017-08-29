@@ -84,6 +84,14 @@ public class RequestControllerUtil {
 
     }
 
+    public static void updateInvalidUser(String fileName) {
+
+            // Extract deviceId
+            String deviceId = DataQualityProcessor.getDeviceIdFromName(fileName);
+            DataAccess.updateInvalidUser(deviceId);
+
+    }
+
     private static int countLabels(String filePath, String fileName) {
 
         File file = new File(filePath + fileName);
