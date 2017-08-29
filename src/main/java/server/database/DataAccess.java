@@ -78,7 +78,7 @@ public class DataAccess {
                         + "' WHERE device_id = \"" + userId + "\";";
             } else {
                 sql = "INSERT INTO user_data (device_id, number_apps, end_of_study_id, os_version, sdk_version, phone_model, real_device_id) "
-                        + "VALUES (\"" + userId + "\", " + numberOfApps + ", \"" + endOfStudyId + "\", \"" + osVersion + "\", \"" + sdkVersion + "\", \"" + phoneModel + "\", \"" +realDeviceId+ "\"");";
+                        + "VALUES (\"" + userId + "\", " + numberOfApps + ", \"" + endOfStudyId + "\", \"" + osVersion + "\", \"" + sdkVersion + "\", \"" + phoneModel + "\", \"" +realDeviceId+ "\")";
                 
             }
             stmt.executeUpdate(sql);
