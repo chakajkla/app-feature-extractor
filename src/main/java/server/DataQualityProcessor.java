@@ -77,7 +77,7 @@ public class DataQualityProcessor
             
             //Get a list of CSV file records
             List<CSVRecord> csvRecords = csvFileParser.getRecords();
-            System.out.println("Number of records: " + csvRecords.size());
+            System.out.println("First record:" + csvRecords.get(0).toString());
             
             // Check all default sensors are recorded
             check4SensorsRecorded(csvRecords);
