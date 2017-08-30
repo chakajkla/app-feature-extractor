@@ -429,9 +429,9 @@ public class DataQualityProcessor
     
     private void check4SensorsRecorded(List<CSVRecord> csvRecords) {
         for (CSVRecord record : csvRecords) {
-            if (!record.isConsistent()) {
-                continue;
-            }
+//            if (!record.isConsistent()) {
+//                continue;
+//            }
             if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_APP)) {
                 appSensorRecorded = true;
             } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_INTERACTION)) {
