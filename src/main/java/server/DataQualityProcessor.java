@@ -70,7 +70,7 @@ public class DataQualityProcessor
         
         
         try {
-            DataAccess.updateLabelledFile(fileName, 1, "Currently checked", false, null);
+            DataAccess.updateLabelledFile(fileName, 1, "Currently checked", false, "");
             
             fileReader = new FileReader(filePath + fileName);
             csvFileParser = CSVFormat.DEFAULT.withDelimiter(';').withHeader(FILE_HEADER_MAPPING).withRecordSeparator('\n').withQuote(null).parse(fileReader);
@@ -107,7 +107,7 @@ public class DataQualityProcessor
         } catch(Exception e) {
             LogUtil.log("Error in CsvFileReader !!!");
             e.printStackTrace();
-            DataAccess.updateLabelledFile(fileName, 3, "Error while reading file");
+            DataAccess.updateLabelledFile(fileName, 3, "Error while reading file", false, "");
         } finally {
             try {
                 if (fileReader != null) {
@@ -407,10 +407,10 @@ public class DataQualityProcessor
         }
         
         if (StringUtils.isEmpty(errorString1)) {
-            DataAccess.updateLabelledFile(fileName, 3, errorString1, StringUtils.isEmpty(missingSensors), !StringUtils.isEmpty(missingSensors) ? errorString2 : null);
+            DataAccess.updateLabelledFile(fileName, 3, errorString1, StringUtils.isEmpty(missingSensors), !StringUtils.isEmpty(missingSensors) ? errorString2 : "");
             return false;
         } else {
-            DataAccess.updateLabelledFile(fileName, 2, "Check passed successfully", StringUtils.isEmpty(missingSensors), !StringUtils.isEmpty(missingSensors) ? errorString2 : null);
+            DataAccess.updateLabelledFile(fileName, 2, "Check passed successfully", StringUtils.isEmpty(missingSensors), !StringUtils.isEmpty(missingSensors) ? errorString2 : "");
             return true;
         }
     }
