@@ -588,7 +588,7 @@ public class DataAccess {
         return true;
     }
     
-    public static boolean updateLabelledFile(String fileName, int fileState, String description) {
+    public static boolean updateLabelledFile(String fileName, int fileState, String description, boolean allSensorsRecorded, String missingSensors) {
         Connection c = null;
         Statement stmt = null;
         try {
@@ -601,7 +601,8 @@ public class DataAccess {
             stmt = c.createStatement();
 
             String sql = "UPDATE labelled_files "
-                    + "SET file_state = " + fileState + ", state_desc = \"" + description + "\", updated = CURRENT_TIMESTAMP "
+                    + "SET file_state = " + fileState + ", state_desc = \"" + description + "\", updated = CURRENT_TIMESTAMP, all_sensors_recorded = "
+                    + (allSensorsRecorded ? 1 : 0) + ", missingSensors = \"" + missingSensors + "\" "
                     + "WHERE file_name = \"" + fileName + "\";";
             
             stmt.executeUpdate(sql);

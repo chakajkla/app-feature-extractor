@@ -32,6 +32,7 @@ public class DataQualityProcessor
     private static final String SENSOR_TYPE_NOTIFICATION = "CONTEXT_SENSOR_NOTIFICATION";
     public static final String SENSOR_TYPE_INTERACTION = "CONTEXT_SENSOR_INTERACTION";
     public static final String SENSOR_TYPE_LABELLING = "CONTEXT_SENSOR_LABELLING";
+    public static final String SENSOR_TYPE_DEVICE = "CONTEXT_SENSOR_DEVICE";
     
     private String filePath;
     private String fileName;
@@ -44,6 +45,10 @@ public class DataQualityProcessor
     private boolean settingsSensorRecorded = false;
     private boolean labellingSensorRecorded = false;
     private boolean locationSensorRecorded = false;
+    private boolean genericSensorRecorded = false;
+    private boolean packageSensorRecorded = false;
+    private boolean notificationSensorRecorded = false;
+    private boolean deviceSensorRecorded = false;
     
     private boolean awarenessSensorValuesCorrect = false;
     private boolean connectivitySensorValuesCorrect = false;
@@ -65,7 +70,7 @@ public class DataQualityProcessor
         
         
         try {
-            DataAccess.updateLabelledFile(fileName, 1, "Currently checked");
+            DataAccess.updateLabelledFile(fileName, 1, "Currently checked", false, null);
             
             fileReader = new FileReader(filePath + fileName);
             csvFileParser = CSVFormat.DEFAULT.withDelimiter(';').withHeader(FILE_HEADER_MAPPING).withRecordSeparator('\n').withQuote(null).parse(fileReader);
@@ -335,70 +340,84 @@ public class DataQualityProcessor
     }
     
     private boolean checkResults() {
-        String errorString = "";
-        if (!appSensorRecorded || !interactionSensorRecorded || !connectivitySensorRecorded || !deviceProtectionSensorRecorded || !awarenessSensorRecorded) {
-            StringBuilder builder = new StringBuilder();
-            
-            if (!appSensorRecorded)
-                builder.append("appSensor, ");
-            if (!interactionSensorRecorded)
-                builder.append("interactionSensor, ");
-            if (!connectivitySensorRecorded)
-                builder.append("connectivitySensor, ");
-            if (!deviceProtectionSensorRecorded)
-                builder.append("deviceProtectionSensor, ");
-            if (!awarenessSensorRecorded)
-                builder.append("awarenessSensor, ");
-            
-            errorString += StringUtils.removeEnd(builder.toString(), ",") + "not recorded. ";
-        }
+        String errorString1 = "";
+        String errorString2 = "";
+        
+        StringBuilder builder = new StringBuilder();
+        
+        if (!appSensorRecorded)
+            builder.append("AppSensor, ");
+        if (!interactionSensorRecorded)
+            builder.append("InteractionSensor, ");
+        if (!connectivitySensorRecorded)
+            builder.append("ConnectivitySensor, ");
+        if (!deviceProtectionSensorRecorded)
+            builder.append("DeviceProtectionSensor, ");
+        if (!awarenessSensorRecorded)
+            builder.append("AwarenessSensor, ");
+        if (!settingsSensorRecorded)
+            builder.append("SettingsSensor, ");
+        if (!genericSensorRecorded)
+            builder.append("GenericSensor, ");
+        if (!deviceSensorRecorded)
+            builder.append("DeviceSensor, ");
+        if (!locationSensorRecorded)
+            builder.append("LocationSensor, ");
+        if (!notificationSensorRecorded)
+            builder.append("NotificationSensor, ");
+        if (!packageSensorRecorded)
+            builder.append("PackageSensor, ");
+        
+        String missingSensors = builder.toString();
+        errorString2 += StringUtils.removeEnd(missingSensors, ",") + "not recorded. ";
+        
         
         if (!awarenessSensorValuesCorrect) {
-            errorString += "AwarenessSensor: values are invalid. ";
+            errorString1 += "AwarenessSensor: values are invalid. ";
         }
         
         if (!connectivitySensorValuesCorrect) {
-            errorString += "ConnectivitySensor: values are invalid. ";
+            errorString1 += "ConnectivitySensor: values are invalid. ";
         }
         
         if (!deviceProtectionSensorValuesCorrect) {
-            errorString += "DeviceProtectionSensor: values are invalid. ";
+            errorString1 += "DeviceProtectionSensor: values are invalid. ";
         }
         
         if (settingsSensorRecorded && !settingsSensorValuesCorrect) {
-            errorString += "SettingsSensor: values are invalid. ";
+            errorString1 += "SettingsSensor: values are invalid. ";
         }
         
         if (labellingSensorRecorded && !labellingSensorValuesCorrect) {
-            errorString += "LabellingSensor: values are invalid. ";
+            errorString1 += "LabellingSensor: values are invalid. ";
         } else if (labellingSensorRecorded && labellingSensorValuesCorrect && (!interactionSensorRecorded || !appSensorRecorded)) {
-            errorString += "LabellingSensor: There is no interaction or app sensor data. ";
+            errorString1 += "LabellingSensor: There is no interaction or app sensor data. ";
         }
         
         if (locationSensorRecorded && !locationSensorValuesCorrect) {
-            errorString += "LocationSensor: values are invalid. ";
+            errorString1 += "LocationSensor: values are invalid. ";
         }
 
         if (appSensorRecorded && !appSensorValuesCorrect) {
-            errorString += "AppSensor: values are invalid. ";
+            errorString1 += "AppSensor: values are invalid. ";
         }
 
         if (interactionSensorRecorded && !interactionSensorValuesCorrect) {
-            errorString += "InteractionSensor: values are invalid. ";
+            errorString1 += "InteractionSensor: values are invalid. ";
         }
         
-        if (StringUtils.isEmpty(errorString)) {
-            DataAccess.updateLabelledFile(fileName, 3, errorString);
+        if (StringUtils.isEmpty(errorString1)) {
+            DataAccess.updateLabelledFile(fileName, 3, errorString1, StringUtils.isEmpty(missingSensors), !StringUtils.isEmpty(missingSensors) ? errorString2 : null);
             return false;
         } else {
-            DataAccess.updateLabelledFile(fileName, 2, "Check passed successfully");
+            DataAccess.updateLabelledFile(fileName, 2, "Check passed successfully", StringUtils.isEmpty(missingSensors), !StringUtils.isEmpty(missingSensors) ? errorString2 : null);
             return true;
         }
     }
     
     private void check4SensorsRecorded(List<CSVRecord> csvRecords) {
         for (CSVRecord record : csvRecords) {
-            if (record.size() < 7) {
+            if (!record.isConsistent()) {
                 continue;
             }
             if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_APP)) {
@@ -417,6 +436,14 @@ public class DataQualityProcessor
                 labellingSensorRecorded = true;
             } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_LOCATION)) {
                 locationSensorRecorded = true;
+            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_DEVICE)) {
+                deviceSensorRecorded = true;
+            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_GENERIC)) {
+                genericSensorRecorded = true;
+            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_NOTIFICATION)) {
+                notificationSensorRecorded = true;
+            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_PACKAGE)) {
+                packageSensorRecorded = true;
             }
         } 
     }
