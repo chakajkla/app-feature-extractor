@@ -456,7 +456,12 @@ public class DataQualityProcessor
 
         String[] sp = fileName.split("_");
         if(sp.length >= 3) {
-            return fileName.startsWith("error") ? sp[1] : sp[2];
+
+            if(fileName.startsWith("error") || fileName.startsWith("invalid")){
+                return sp[1];
+            }
+
+            return sp[2];
         }
 
         return null;

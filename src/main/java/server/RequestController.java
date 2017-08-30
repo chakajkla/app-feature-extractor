@@ -40,6 +40,8 @@ public class RequestController {
             filePath = "/home/vmadmin/data_storage/manual_features/";
         } else if (name.contains("error")) {
             filePath = "/home/vmadmin/data_storage/errors/";
+        } else if (name.contains("invalid")) {
+            filePath = "/home/vmadmin/data_storage/invalid/";
         }
 
         if (!file.isEmpty()) {
@@ -74,6 +76,8 @@ public class RequestController {
                     //update missing packages
                     RequestControllerUtil.updateMissingPackages(filePath, name);
 
+                } else if (name.contains("invalid")) {
+                    RequestControllerUtil.updateInvalidUser(name);
                 }
 
                 return "You successfully uploaded " + name + " into " + name + "-uploaded !";
