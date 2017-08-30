@@ -77,6 +77,7 @@ public class DataQualityProcessor
             
             //Get a list of CSV file records
             List<CSVRecord> csvRecords = csvFileParser.getRecords();
+            System.out.println("Number of records: " + csvRecords.size());
             
             // Check all default sensors are recorded
             check4SensorsRecorded(csvRecords);
@@ -129,7 +130,7 @@ public class DataQualityProcessor
         int contextEventId = 0;
         try {
             for (CSVRecord record : csvRecords) {
-                if (record.size() < 7) {
+                if (!record.isConsistent()) {
                     continue;
                 }
                 if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_AWARENESS)
@@ -159,7 +160,7 @@ public class DataQualityProcessor
     private boolean checkInteractionSensorValues(List<CSVRecord> csvRecords) {
         boolean interactionSensorValuesCorrect = false;
         for (CSVRecord record : csvRecords) {
-            if (record.size() < 7) {
+            if (!record.isConsistent()) {
                 continue;
             }
             if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_INTERACTION)) {
@@ -191,7 +192,7 @@ public class DataQualityProcessor
     private boolean checkAppSensorValues(List<CSVRecord> csvRecords) {
         boolean appSensorValuesCorrect = false;
         for (CSVRecord record : csvRecords) {
-            if (record.size() < 7) {
+            if (!record.isConsistent()) {
                 continue;
             }
             if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_APP)) {
@@ -223,7 +224,7 @@ public class DataQualityProcessor
     private boolean checkConnectivitySensorValues(List<CSVRecord> csvRecords) {
         boolean connectivitySensorValuesCorrect = false;
         for (CSVRecord record : csvRecords) {
-            if (record.size() < 7) {
+            if (!record.isConsistent()) {
                 continue;
             }
             if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_CONNECTIVITY)) {
@@ -250,7 +251,7 @@ public class DataQualityProcessor
     private boolean checkDeviceProtectionSensorValues(List<CSVRecord> csvRecords) {
         boolean deviceProtectionSensorValuesCorrect = false;
         for (CSVRecord record : csvRecords) {
-            if (record.size() < 7) {
+            if (!record.isConsistent()) {
                 continue;
             }
             if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_DEVICE_PROTECTION)) {
@@ -276,7 +277,7 @@ public class DataQualityProcessor
     private boolean checkSettingsSensorValues(List<CSVRecord> csvRecords) {
         try {
             for (CSVRecord record : csvRecords) {
-                if (record.size() < 7) {
+                if (!record.isConsistent()) {
                     continue;
                 }
                 if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_SETTINGS)
@@ -293,7 +294,7 @@ public class DataQualityProcessor
     private boolean checkLabellingSensorValues(List<CSVRecord> csvRecords) {
         boolean labellingSensorValuesCorrect = false;
         for (CSVRecord record : csvRecords) {
-            if (record.size() < 7) {
+            if (!record.isConsistent()) {
                 continue;
             }
             if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_LABELLING)) {
@@ -317,7 +318,7 @@ public class DataQualityProcessor
     private boolean checkLocationSensorValues(List<CSVRecord> csvRecords) {
         try {
             for (CSVRecord record : csvRecords) {
-                if (record.size() < 7) {
+                if (!record.isConsistent()) {
                     continue;
                 }
                 if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_LABELLING)) {
