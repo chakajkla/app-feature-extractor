@@ -73,7 +73,7 @@ public class DataQualityProcessor
             DataAccess.updateLabelledFile(fileName, 1, "Currently checked", false, "");
             
             fileReader = new FileReader(filePath + fileName);
-            csvFileParser = CSVFormat.DEFAULT.withDelimiter(';').withHeader(FILE_HEADER_MAPPING).withRecordSeparator('\n').withQuote(null).parse(fileReader);
+            csvFileParser = CSVFormat.DEFAULT.withDelimiter(';').withHeader(FILE_HEADER_MAPPING).withSkipHeaderRecord().withRecordSeparator('\n').withQuote(null).parse(fileReader);
             
             //Get a list of CSV file records
             List<CSVRecord> csvRecords = csvFileParser.getRecords();
