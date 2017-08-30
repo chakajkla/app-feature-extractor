@@ -346,28 +346,39 @@ public class DataQualityProcessor
         
         StringBuilder builder = new StringBuilder();
         
-        if (!appSensorRecorded)
+        if (!appSensorRecorded) {
             builder.append("AppSensor, ");
-        if (!interactionSensorRecorded)
+        }
+        if (!interactionSensorRecorded) {
             builder.append("InteractionSensor, ");
-        if (!connectivitySensorRecorded)
+        }
+        if (!connectivitySensorRecorded) {
             builder.append("ConnectivitySensor, ");
-        if (!deviceProtectionSensorRecorded)
+        }
+        if (!deviceProtectionSensorRecorded) {
             builder.append("DeviceProtectionSensor, ");
-        if (!awarenessSensorRecorded)
+        }
+        if (!awarenessSensorRecorded) {
             builder.append("AwarenessSensor, ");
-        if (!settingsSensorRecorded)
+        }
+        if (!settingsSensorRecorded) {
             builder.append("SettingsSensor, ");
-        if (!genericSensorRecorded)
+        }
+        if (!genericSensorRecorded) {
             builder.append("GenericSensor, ");
-        if (!deviceSensorRecorded)
+        }
+        if (!deviceSensorRecorded) {
             builder.append("DeviceSensor, ");
-        if (!locationSensorRecorded)
+        }
+        if (!locationSensorRecorded) {
             builder.append("LocationSensor, ");
-        if (!notificationSensorRecorded)
+        }
+        if (!notificationSensorRecorded) {
             builder.append("NotificationSensor, ");
-        if (!packageSensorRecorded)
+        }
+        if (!packageSensorRecorded) {
             builder.append("PackageSensor, ");
+        }
         
         String missingSensors = builder.toString();
         errorString2 += StringUtils.removeEnd(missingSensors, ",") + "not recorded. ";
