@@ -641,7 +641,7 @@ public class DataAccess {
 
             String sql = "UPDATE labelled_files "
                     + "SET file_state = " + fileState + ", state_desc = \"" + description + "\", updated = CURRENT_TIMESTAMP, all_sensors_recorded = "
-                    + (allSensorsRecorded ? 1 : 0) + ", missingSensors = \"" + missingSensors + "\" "
+                    + (allSensorsRecorded ? 1 : 0) + ", missing_sensors = \"" + missingSensors + "\" "
                     + "WHERE file_name = \"" + fileName + "\";";
             
             stmt.executeUpdate(sql);
