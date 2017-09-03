@@ -67,6 +67,7 @@ public class DataQualityProcessor
     public boolean checkLabeledDataFile() {
         FileReader fileReader = null;
         CSVParser csvFileParser = null;
+        boolean errorOccured = false;
         
         
         try {
@@ -106,6 +107,7 @@ public class DataQualityProcessor
                 locationSensorValuesCorrect = checkLocationSensorValues(csvRecords);
             }
         } catch(Exception e) {
+            errorOccured = true;
             LogUtil.log("Error in CsvFileReader !!!");
             e.printStackTrace();
             DataAccess.updateLabelledFile(fileName, 3, "Error while reading file", false, "");
@@ -123,6 +125,9 @@ public class DataQualityProcessor
             }
         }
         
+        if (errorOccured) {
+            return false;
+        }
         return checkResults();
     }
     
@@ -432,30 +437,34 @@ public class DataQualityProcessor
 //            if (!record.isConsistent()) {
 //                continue;
 //            }
-            if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_APP)) {
-                appSensorRecorded = true;
-            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_INTERACTION)) {
-                interactionSensorRecorded = true;
-            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_CONNECTIVITY)) {
-                connectivitySensorRecorded = true;
-            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_DEVICE_PROTECTION)) {
-                deviceProtectionSensorRecorded = true;
-            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_AWARENESS)) {
-                awarenessSensorRecorded = true;
-            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_SETTINGS)) {
-                settingsSensorRecorded = true;
-            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_LABELLING)) {
-                labellingSensorRecorded = true;
-            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_LOCATION)) {
-                locationSensorRecorded = true;
-            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_DEVICE)) {
-                deviceSensorRecorded = true;
-            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_GENERIC)) {
-                genericSensorRecorded = true;
-            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_NOTIFICATION)) {
-                notificationSensorRecorded = true;
-            } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_PACKAGE)) {
-                packageSensorRecorded = true;
+            try {
+                if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_APP)) {
+                    appSensorRecorded = true;
+                } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_INTERACTION)) {
+                    interactionSensorRecorded = true;
+                } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_CONNECTIVITY)) {
+                    connectivitySensorRecorded = true;
+                } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_DEVICE_PROTECTION)) {
+                    deviceProtectionSensorRecorded = true;
+                } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_AWARENESS)) {
+                    awarenessSensorRecorded = true;
+                } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_SETTINGS)) {
+                    settingsSensorRecorded = true;
+                } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_LABELLING)) {
+                    labellingSensorRecorded = true;
+                } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_LOCATION)) {
+                    locationSensorRecorded = true;
+                } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_DEVICE)) {
+                    deviceSensorRecorded = true;
+                } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_GENERIC)) {
+                    genericSensorRecorded = true;
+                } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_NOTIFICATION)) {
+                    notificationSensorRecorded = true;
+                } else if (StringUtils.equals(record.get("context_event_type"), SENSOR_TYPE_PACKAGE)) {
+                    packageSensorRecorded = true;
+                }
+            } catch(IllegalArgumentException e) {
+                continue;
             }
         } 
     }
