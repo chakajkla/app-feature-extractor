@@ -86,6 +86,7 @@ public class FeatureProcessor {
     }
 
     private static final String missingPackageFilePath = "/home/vmadmin/data_storage/packages";
+    private static final String missingPackageCheckedFilePath = "/home/vmadmin/server/data/evaluation/apps/packages";
 
     public static void appendPackageID(String packageID) {
 
@@ -119,7 +120,7 @@ public class FeatureProcessor {
 
     public static boolean containInCheckedList(String packageID) {
 
-        Path FILE_PATH = Paths.get(missingPackageFilePath, "missing_packages_checked.txt");
+        Path FILE_PATH = Paths.get(missingPackageCheckedFilePath, "missing_packages_checked.txt");
         List<String> packageIDs = new ArrayList<>();
         try (Stream<String> stream = Files.lines(FILE_PATH)) {
 

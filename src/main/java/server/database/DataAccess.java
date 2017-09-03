@@ -75,6 +75,7 @@ public class DataAccess {
                         +", os_version = '" + osVersion
                         +"', sdk_version = '" + sdkVersion
                         +"', phone_model = '" + phoneModel
+                        +"', real_device_id = '" + realDeviceId
                         + "' WHERE device_id = \"" + userId + "\";";
             } else {
                 sql = "INSERT INTO user_data (device_id, number_apps, end_of_study_id, os_version, sdk_version, phone_model, real_device_id) "
